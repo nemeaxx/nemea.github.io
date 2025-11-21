@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nemea Portfolio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-color: #f4f6f9;
+            --text-color: #333333;
+            --accent-color: #3b82f6; /* 鮮やかな青 */
+            --card-bg: #ffffff;
+            --shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Manrope', 'Noto Sans JP', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.8;
+            background-image: radial-gradient(#e1e1e1 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        a { text-decoration: none; color: var(--text-color); transition: 0.3s; }
+        a:hover { color: var(--accent-color); }
+
+        /* Header */
+        header {
+            padding: 20px 40px;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            position: fixed;
+            width: 100%;
+            box-sizing: border-box;
+            z-index: 1000;
+            border-bottom: 1px solid #eaeaea;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo { font-weight: 800; font-size: 1.5rem; letter-spacing: 1px; }
+        
+        nav ul { list-style: none; display: flex; gap: 30px; padding: 0; margin: 0; }
+        nav ul li a { font-weight: 700; font-size: 0.9rem; color: #555; }
+        nav ul li a:hover { color: var(--accent-color); }
+
+        /* Main */
+        main { padding-top: 120px; padding-bottom: 80px; }
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+
+        section { margin-bottom: 120px; }
+        h2 {
+            font-size: 2.5rem;
+            margin-bottom: 50px;
+            position: relative;
+            display: inline-block;
+            color: #111;
+        }
+        h2::before {
+            content: '';
+            position: absolute;
+            left: 0; top: -10px;
+            width: 30px; height: 4px;
+            background: var(--accent-color);
+            border-radius: 2px;
+        }
+
+        /* Profile */
+        .profile-area {
+            display: flex;
+            align-items: center;
+            gap: 60px;
+            background: #fff;
+            padding: 60px;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+            z-index: 1;
+        }
+
+        /* プロフィール背景演出 */
+        .profile-bg-reveal {
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            width: calc(100% + 4px);  /* 左右2px分はみ出させ、枠でトリミング */
+            height: calc(100% + 4px); /* 上下も均等に伸ばして比率を保つ */
+            background-image: url('Aurora_MV-0003.png');
+            background-size: cover; /* PC：デフォルトに戻す */
+            background-position: center;
+            background-repeat: no-repeat;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            z-index: -1;
+        }
+
+        /* プロフィールにカーソルが乗ったときにうっすら表示 */
+        .profile-area.bg-hover .profile-bg-reveal {
+            opacity: 0.35;
+        }
+        
+        /* ホバー時に鮮明に浮き上がる */
+        .profile-area.bg-active .profile-bg-reveal {
+            opacity: 0.8;
+        }
+        
+        /* テキスト色調整（背景が出た時用） */
+        .profile-area.bg-active .profile-text h3,
+        .profile-area.bg-active .profile-text p {
+            color: #fff;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+        .profile-area.bg-active .profile-sub {
+            color: #7fd8ff;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .profile-text {
+            position: relative;
+            z-index: 2;
+            flex: 1;
+            transition: color 0.3s;
+        }
+
+        .profile-icon {
+            width: 200px; height: 200px;
+            border-radius: 30px;
+            background-image: url('Nemea_kun_icon.png');
+            background-size: cover;
+            background-position: center;
+            transform: rotate(-3deg);
+            border: 5px solid #fff;
+            box-shadow: 0 20px 40px rgba(59, 130, 246, 0.2);
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+            cursor: pointer;
+            z-index: 2;
+            flex-shrink: 0;
+        }
+        
+        .profile-icon:hover {
+            transform: rotate(0deg) scale(1.05);
+            box-shadow: 0 25px 50px rgba(59, 130, 246, 0.4);
+        }
+
+        .profile-text h3 { font-size: 2.5rem; margin: 0 0 10px; }
+        .profile-sub { color: var(--accent-color); font-weight: 700; margin-bottom: 20px; display: block; }
+
+        /* Social Icons in Profile */
+        .social-links {
+            margin-top: 25px;
+            display: flex;
+            justify-content: flex-start; /* 左寄せ */
+            gap: 15px;
+            flex-wrap: wrap; /* 画面が狭い場合に折り返し */
+            transition: opacity 0.3s ease;
+        }
+
+        /* プロフィールアイコンにホバー中はSNSアイコンを非表示 */
+        .profile-area.bg-active .social-links {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .social-icon {
+            width: 45px; height: 45px;
+            background: #f4f6f9; /* 他と同じ薄いグレー背景 */
+            border-radius: 50%;
+            display: grid;
+            place-items: center;     /* 水平・垂直とも中央寄せ */
+            color: var(--text-color);
+            font-size: 1.2rem;
+            line-height: 1;          /* 行の高さを1に固定してズレを防止 */
+            transition: 0.3s;
+            text-decoration: none;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            position: relative;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        /* アイコン自体の位置微調整 */
+        .social-icon i {
+            display: block;          /* グリッド中央に載せるだけ */
+            line-height: 1;
+            transform: translateY(1px); /* わずかに下げて中央見えに調整 */
+        }
+
+        /* 汎用ホバー */
+        .social-icon:hover {
+            background: var(--accent-color);
+            color: #fff;
+            transform: translateY(-3px);
+        }
+        
+        /* X (Twitter) Style */
+        .social-icon.x-twitter {
+            background: #f4f6f9;
+            color: #000000;
+        }
+        .social-icon.x-twitter:hover {
+            background-color: #000000;
+            color: #ffffff;
+            transform: translateY(-3px);
+        }
+
+        /* Custom Image Icon Style (Niconico/Apple) */
+        .social-icon.custom-img-icon {
+            padding: 8px; /* 画像の余白調整を少し減らして全体サイズを揃える */
+            box-sizing: border-box;
+        }
+        
+        .social-icon.custom-img-icon img {
+            width: 80%;
+            height: 80%;
+            object-fit: contain;
+            /* 画像を強制的に黒にするフィルター */
+            filter: brightness(0) saturate(100%); 
+            transition: 0.3s;
+            display: block;
+        }
+
+        /* Niconicoのみ少し小さくする */
+        .social-icon.nico-icon img {
+            width: 60%;
+            height: 60%;
+        }
+
+        /* ホバー時にカスタムアイコンを白にする */
+        .social-icon.custom-img-icon:hover img {
+            filter: brightness(0) saturate(100%) invert(1);
+        }
+
+        /* Global background reveal on profile hover */
+        .global-bg {
+            position: fixed;
+            inset: 0;
+            background-image: url('chunno-wu-houni-kongni-huiku-ji-yun-yun-meishii-jing-se-bei-jingnoaitea (1).jpg');
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            transition: opacity 0.6s ease;
+            pointer-events: none;
+            z-index: -1;
+        }
+        .global-bg::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.25);
+        }
+        .global-bg-active .global-bg {
+            opacity: 0.75;
+            filter: saturate(1.25) brightness(1.05);
+        }
+
+        /* Hide other sections while profile icon hover */
+        .global-bg-active #news,
+        .global-bg-active #works,
+        .global-bg-active #contact {
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        /* Hide header bar except logo when bg is active */
+        .global-bg-active header {
+            background: transparent;
+            border-bottom: none;
+            box-shadow: none;
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
+        }
+        .global-bg-active header nav {
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .global-bg-active .logo {
+            color: #fff;
+            text-shadow: 0 4px 16px rgba(0,0,0,0.4);
+        }
+
+        /* News */
+        .news-feature {
+            position: relative;
+            border-radius: 22px;
+            overflow: hidden;
+            box-shadow: 0 16px 44px rgba(0,0,0,0.12);
+            background-color: #eee;
+            background-size: cover;
+            background-position: center;
+            min-height: 360px;
+            margin-bottom: 60px;
+            display: flex;
+            align-items: flex-end;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .news-feature::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.55) 100%);
+            pointer-events: none;
+        }
+        .news-feature:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 56px rgba(0,0,0,0.15);
+        }
+        .news-content {
+            position: relative;
+            z-index: 1;
+            padding: 30px 32px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .news-title {
+            display: inline-block;
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #fff;
+            text-shadow: 0 3px 12px rgba(0,0,0,0.4);
+            transition: transform 0.3s ease, text-shadow 0.3s ease, filter 0.3s ease;
+            margin-top: 8px; /* タイトルをやや下に配置 */
+        }
+        .news-desc {
+            margin-top: 10px;
+            font-size: 1rem;
+            color: #e2e8f0;
+            line-height: 1.8;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.35);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        .news-feature:hover .news-title {
+            transform: translateY(-3px);
+            text-shadow: 0 6px 18px rgba(0,0,0,0.45);
+            filter: brightness(1.1);
+        }
+        /* 説明テキストはホバーでも表示を維持 */
+
+
+        /* Works */
+        .works-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 40px;
+        }
+        .work-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        .work-card:hover { transform: translateY(-10px); }
+
+        .work-info { padding: 25px; flex-grow: 1; display: flex; flex-direction: column; }
+        .work-meta { color: var(--accent-color); font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+        .work-title { font-size: 1.2rem; font-weight: 700; margin: 5px 0 10px; display: block; }
+        .work-desc { font-size: 0.9rem; color: #666; margin-bottom: 15px; flex-grow: 1; }
+        
+        .work-link {
+            margin-top: auto;
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: var(--accent-color);
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .work-link:hover { text-decoration: underline; }
+
+        /* Contact */
+        .contact-area {
+            text-align: center;
+            background: #fff;
+            padding: 60px 20px;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+        }
+        
+        .contact-btn {
+            background: var(--accent-color);
+            color: #fff;
+            padding: 15px 50px;
+            border-radius: 50px;
+            font-weight: 700;
+            box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
+            display: inline-block;
+            margin: 20px 0;
+            text-decoration: none;
+        }
+        .contact-btn:hover {
+            background: #2563eb;
+            color: #fff;
+            box-shadow: 0 15px 30px rgba(59, 130, 246, 0.4);
+        }
+        
+        .contact-info-text {
+            margin-bottom: 30px;
+            color: #555;
+            line-height: 2;
+        }
+        
+        .contact-note {
+            font-size: 0.8rem;
+            color: #888;
+            margin-top: 20px;
+        }
+
+        /* Copyable text */
+        .copyable {
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+        .copyable:hover {
+            color: var(--accent-color);
+        }
+        .copyable.copied {
+            color: var(--accent-color);
+            text-decoration: underline;
+        }
+
+        /* Tablet landscape調整 (PCより狭い幅) */
+        @media (max-width: 1200px) {
+            .profile-bg-reveal {
+                background-size: 120%;
+                background-position: center 32%;
+            }
+        }
+
+        /* 1024px程度の画面で少し拡大 */
+        @media (max-width: 1024px) {
+            .profile-bg-reveal {
+                background-size: 110%;
+                background-position: center 50%;
+            }
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .profile-area { flex-direction: column; padding: 30px; text-align: center; gap: 30px; }
+            .profile-bg-reveal {
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-size: 200%; /* モバイル：元の設定に戻す */
+                background-position: center 40%; /* 顔が少し上に来るよう位置調整 */
+            }
+            .social-links { justify-content: center; }
+            .news-feature {
+                min-height: 260px;
+                align-items: flex-end;
+            }
+            .news-content {
+                padding: 24px 20px;
+            }
+            .news-title { font-size: 1.2rem; }
+            .news-desc { font-size: 0.95rem; line-height: 1.7; }
+            .container { padding: 0 16px; }
+        }
+
+        /* 425px程度：さらに拡大 */
+        @media (max-width: 425px) {
+            .profile-bg-reveal {
+                background-size: 490%;
+                background-position: center 30%;
+            }
+        }
+
+        /* 375px程度：強めに拡大 */
+        @media (max-width: 375px) {
+            .profile-bg-reveal {
+                background-size: 530%;
+                background-position: center 34%;
+            }
+        }
+
+        /* 325px程度：さらに拡大 */
+        @media (max-width: 325px) {
+            .profile-bg-reveal {
+                background-size: 600%;
+                background-position: center 34%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="global-bg" id="globalBg"></div>
+    <header>
+        <div class="logo">Nemea</div>
+        <nav>
+            <ul>
+                <li><a href="#profile">PROFILE</a></li>
+                <li><a href="#works">WORKS</a></li>
+                <li><a href="#contact">CONTACT</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <div class="container">
+            <!-- PROFILE -->
+            <section id="profile">
+                <div class="profile-area" id="profileArea">
+                    <!-- 背景演出用要素 -->
+                    <div class="profile-bg-reveal"></div>
+                    
+                    <!-- アイコン -->
+                    <div class="profile-icon" id="profileIcon"></div>
+                    
+                    <div class="profile-text">
+                        <h3>Nemea</h3>
+                        <span class="profile-sub">Create Music</span>
+                        <p>
+                            夏とサウナとEDMが好き。
+                        </p>
+                        
+                        <!-- SNS Links -->
+                        <div class="social-links">
+                            <!-- YouTube -->
+                            <a href="https://www.youtube.com/@Nemea_x" target="_blank" class="social-icon" title="YouTube">
+                                <i class="fa-brands fa-youtube"></i>
+                            </a>
+                            <!-- Niconico (User Image Placeholder) -->
+                            <a href="https://sp.nicovideo.jp/user/120910683/video" target="_blank" class="social-icon custom-img-icon nico-icon" title="Niconico">
+                                <img src="s-512x512_webp_20ae26e6-1694-4381-804f-2ca72d54bc3c.png" alt="Niconico">
+                            </a>
+                            <!-- Spotify -->
+                            <a href="https://open.spotify.com/intl-ja/artist/4JJdclKTjDAQjU3MOEHxIg" target="_blank" class="social-icon" title="Spotify">
+                                <i class="fa-brands fa-spotify"></i>
+                            </a>
+                            <!-- Apple Music (Custom Image) -->
+                            <a href="https://music.apple.com/jp/artist/nemea/1759992210" target="_blank" class="social-icon custom-img-icon" title="Apple Music">
+                                <img src="s-1102x1084_v-fs_webp_c2e4a516-708d-4f26-964f-8a75149115d3.png" alt="Apple Music">
+                            </a>
+                            <!-- X (Twitter) -->
+                            <a href="https://x.com/Nemea_x" target="_blank" class="social-icon x-twitter" title="X (Twitter)">
+                                <i class="fa-brands fa-x-twitter"></i>
+                            </a>
+                            <!-- Mail -->
+                            <a href="mailto:nemea79@gmail.com" class="social-icon" title="Mail">
+                                <i class="fa-solid fa-envelope"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- NEWS -->
+            <section id="news">
+                <h2>NEWS</h2>
+                <div class="news-feature" style="background-image: url('imagae.png');">
+                    <div class="news-content">
+                        <span class="news-title">MV『Aurora』</span>
+                        <p class="news-desc">新曲「Aurora」のMVを投稿しました。</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- WORKS -->
+            <section id="works">
+                <h2>WORKS</h2>
+                <div class="works-grid">
+                    <!-- Work 1 -->
+                    <article class="work-card">
+                        <div class="work-info">
+                            <span class="work-meta">Providing Music / Album</span>
+                            <span class="work-title">BLACK ROSE 1st Album "Break Day"</span>
+                            <p class="work-desc">BLACK ROSE 1stアルバムに「Break Day」楽曲提供。</p>
+                            <a href="https://shakirari.theshop.jp/items/98733310?fbclid=PAY2xjawIf6yBleHRuA2FlbQIxMQABpqxT8hsV4uhqkCT1Jl4rF2Jw12Uhu4YeMXYQEhyUS6KJHblxiTRkWhOIdw_aem_trZCgNEzppxs8cJattoyAA" target="_blank" class="work-link">View Shop <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+                        </div>
+                    </article>
+
+                    <!-- Work 2 -->
+                    <article class="work-card">
+                        <div class="work-info">
+                            <span class="work-meta">Event / Live</span>
+                            <span class="work-title">アイドルプラネタリウム VOL.156</span>
+                            <p class="work-desc">BLACK ROSEさんに「ラディアンス」を歌って頂きました。</p>
+                            <a href="https://tiget.net/events/344771" target="_blank" class="work-link">Event Info <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+                        </div>
+                    </article>
+                    
+                    <!-- Work 3 -->
+                    <article class="work-card">
+                        <div class="work-info">
+                            <span class="work-meta">Event / Live</span>
+                            <span class="work-title">なんちゃらアイドル主催 「大人の文化祭」</span>
+                            <p class="work-desc">イベントにてBLACK ROSEさんに楽曲を歌唱して頂きました。</p>
+                        </div>
+                    </article>
+                </div>
+            </section>
+
+            <!-- CONTACT -->
+            <section id="contact">
+                <h2>CONTACT</h2>
+                <div class="contact-area">
+                    <p class="contact-info-text">
+                        楽曲制作のご依頼等は、下記メールアドレス<br>
+                        またはSNSのDM、Discord等でお気軽にご連絡ください。
+                    </p>
+                    
+                    <div style="margin: 20px 0;">
+                        <a href="mailto:nemea79@gmail.com" class="contact-btn">nemea79@gmail.com</a>
+                        <p style="margin-top: 15px; font-weight: bold; font-size: 1.1rem; color: #333;">
+                            <i class="fa-brands fa-discord" style="color: #5865F2; margin-right: 5px;"></i>
+                            <span aria-hidden="true">Discord:</span>
+                            <span id="discordCopy" class="copyable" aria-label="Discord IDをコピー" style="margin-left: 4px;">nm79</span>
+                        </p>
+                    </div>
+                    
+                    <p class="contact-note">
+                        ※3日ほど反応がないようでしたら、お手数ですが他の連絡手段にてご連絡頂ければ幸いです。
+                    </p>
+                </div>
+            </section>
+        </div>
+    </main>
+    
+    <footer style="text-align: center; padding: 40px; color: #888; font-size: 0.8rem;">
+        &copy; 2025 by Nemea.
+    </footer>
+
+    <script>
+        // プロフィール背景のホバーエフェクト制御
+        const profileIcon = document.getElementById('profileIcon');
+        const profileArea = document.getElementById('profileArea');
+        const bodyEl = document.body;
+        const discordCopyEl = document.getElementById('discordCopy');
+
+        profileArea.addEventListener('mouseenter', () => {
+            profileArea.classList.add('bg-hover');
+        });
+
+        profileArea.addEventListener('mouseleave', () => {
+            profileArea.classList.remove('bg-hover', 'bg-active');
+            bodyEl.classList.remove('global-bg-active');
+        });
+
+        profileIcon.addEventListener('mouseenter', () => {
+            profileArea.classList.add('bg-active');
+            bodyEl.classList.add('global-bg-active');
+        });
+
+        profileIcon.addEventListener('mouseleave', () => {
+            profileArea.classList.remove('bg-active');
+            bodyEl.classList.remove('global-bg-active');
+        });
+
+        // Discord ID copy
+        if (discordCopyEl) {
+            discordCopyEl.addEventListener('click', async () => {
+                try {
+                    await navigator.clipboard.writeText('nm79');
+                    discordCopyEl.classList.add('copied');
+                    setTimeout(() => discordCopyEl.classList.remove('copied'), 1200);
+                } catch (e) {
+                    console.error('Clipboard copy failed', e);
+                }
+            });
+        }
+    </script>
+</body>
+</html>
