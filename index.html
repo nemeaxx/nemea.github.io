@@ -110,7 +110,7 @@
             left: -2px;
             width: calc(100% + 4px);  /* 左右2px分はみ出させ、枠でトリミング */
             height: calc(100% + 4px); /* 上下も均等に伸ばして比率を保つ */
-            background-image: url('Aurora_MV-0003.png');
+            background-color: #cfd8e3;
             background-size: cover; /* PC：デフォルトに戻す */
             background-position: center;
             background-repeat: no-repeat;
@@ -150,9 +150,10 @@
         .profile-icon {
             width: 200px; height: 200px;
             border-radius: 30px;
-            background-image: url('Nemea_kun_icon.png');
+            background-color: #e7eefb;
             background-size: cover;
             background-position: center;
+            background-repeat: no-repeat;
             transform: rotate(-3deg);
             border: 5px solid #fff;
             box-shadow: 0 20px 40px rgba(59, 130, 246, 0.2);
@@ -259,7 +260,7 @@
         .global-bg {
             position: fixed;
             inset: 0;
-            background-image: url('chunno-wu-houni-kongni-huiku-ji-yun-yun-meishii-jing-se-bei-jingnoaitea (1).jpg');
+            background-color: #0b1224;
             background-size: cover;
             background-position: center;
             opacity: 0;
@@ -524,7 +525,7 @@
     </style>
 </head>
 <body>
-    <div class="global-bg" id="globalBg"></div>
+    <div class="global-bg" id="globalBg" data-bg="chunno-wu-houni-kongni-huiku-ji-yun-yun-meishii-jing-se-bei-jingnoaitea (1).jpg"></div>
     <header>
         <div class="header-inner">
             <div class="logo">Nemea</div>
@@ -544,10 +545,10 @@
             <section id="profile">
                 <div class="profile-area" id="profileArea">
                     <!-- 背景演出用要素 -->
-                    <div class="profile-bg-reveal"></div>
+                    <div class="profile-bg-reveal lazy-bg" data-bg="Aurora_MV-0003.png"></div>
                     
                     <!-- アイコン -->
-                    <div class="profile-icon" id="profileIcon"></div>
+                    <div class="profile-icon" id="profileIcon" data-bg="Nemea_kun_icon.png"></div>
                     
                     <div class="profile-text">
                         <h3>Nemea</h3>
@@ -564,7 +565,7 @@
                             </a>
                             <!-- Niconico (User Image Placeholder) -->
                             <a href="https://sp.nicovideo.jp/user/120910683/video" target="_blank" class="social-icon custom-img-icon nico-icon" title="Niconico">
-                                <img src="s-512x512_webp_20ae26e6-1694-4381-804f-2ca72d54bc3c.png" alt="Niconico">
+                                <img src="s-512x512_webp_20ae26e6-1694-4381-804f-2ca72d54bc3c.png" alt="Niconico" loading="lazy" decoding="async" width="45" height="45">
                             </a>
                             <!-- Spotify -->
                             <a href="https://open.spotify.com/intl-ja/artist/4JJdclKTjDAQjU3MOEHxIg" target="_blank" class="social-icon" title="Spotify">
@@ -572,7 +573,7 @@
                             </a>
                             <!-- Apple Music (Custom Image) -->
                             <a href="https://music.apple.com/jp/artist/nemea/1759992210" target="_blank" class="social-icon custom-img-icon" title="Apple Music">
-                                <img src="s-1102x1084_v-fs_webp_c2e4a516-708d-4f26-964f-8a75149115d3.png" alt="Apple Music">
+                                <img src="s-1102x1084_v-fs_webp_c2e4a516-708d-4f26-964f-8a75149115d3.png" alt="Apple Music" loading="lazy" decoding="async" width="45" height="45">
                             </a>
                             <!-- X (Twitter) -->
                             <a href="https://x.com/Nemea_x" target="_blank" class="social-icon x-twitter" title="X (Twitter)">
@@ -590,7 +591,7 @@
             <!-- NEWS -->
             <section id="news">
                 <h2>NEWS</h2>
-                <a href="https://youtu.be/0CmoKWCAXqQ" target="_blank" class="news-feature" style="background-image: url('imagae.png'); display: block; text-decoration: none;">
+                <a href="https://youtu.be/0CmoKWCAXqQ" target="_blank" class="news-feature lazy-bg" data-bg="imagae.png">
                     <div class="news-content">
                         <span class="news-title">MV『Aurora』</span>
                         <p class="news-desc">新曲「Aurora」のMVを投稿しました。</p>
@@ -670,6 +671,7 @@
         const bodyEl = document.body;
         const discordCopyEl = document.getElementById('discordCopy');
         const headerEl = document.querySelector('header');
+        const globalBgEl = document.getElementById('globalBg');
 
         profileArea.addEventListener('mouseenter', () => {
             profileArea.classList.add('bg-hover');
@@ -702,6 +704,55 @@
                 }
             });
         }
+
+        // 背景画像を遅延読み込み（IntersectionObserverでビューポート付近になったときに反映）
+        const lazyLoadBackground = (el) => {
+            if (!el || !el.dataset.bg) return;
+            const src = el.dataset.bg;
+            const applyBg = () => {
+                el.style.backgroundImage = `url("${src}")`;
+                el.removeAttribute('data-bg');
+            };
+            const img = new Image();
+            img.onload = applyBg;
+            img.onerror = applyBg;
+            img.src = src;
+        };
+
+        const lazyBgTargets = document.querySelectorAll('.lazy-bg[data-bg]');
+        if ('IntersectionObserver' in window) {
+            const observer = new IntersectionObserver((entries, obs) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        lazyLoadBackground(entry.target);
+                        obs.unobserve(entry.target);
+                    }
+                });
+            }, { rootMargin: '200px 0px' });
+            lazyBgTargets.forEach(el => observer.observe(el));
+        } else {
+            lazyBgTargets.forEach(el => setTimeout(() => lazyLoadBackground(el), 300));
+        }
+
+        // プロフィールアイコンは初期表示優先のため、アイドル時間にゆるく読み込み
+        if (profileIcon && profileIcon.dataset.bg) {
+            const loadProfileIcon = () => lazyLoadBackground(profileIcon);
+            if ('requestIdleCallback' in window) {
+                requestIdleCallback(loadProfileIcon, { timeout: 800 });
+            } else {
+                setTimeout(loadProfileIcon, 500);
+            }
+        }
+
+        // グローバル背景は初回ホバー時のみ読み込み
+        let globalBgLoaded = false;
+        const ensureGlobalBg = () => {
+            if (globalBgLoaded || !globalBgEl || !globalBgEl.dataset.bg) return;
+            lazyLoadBackground(globalBgEl);
+            globalBgLoaded = true;
+        };
+        profileIcon.addEventListener('mouseenter', ensureGlobalBg);
+        profileArea.addEventListener('mouseenter', ensureGlobalBg);
 
         // ナビゲーションのスクロールをゆっくり＆ヘッダー分オフセット
         document.querySelectorAll('nav a[href^="#"]').forEach(link => {
