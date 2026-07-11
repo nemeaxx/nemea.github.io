@@ -3,10 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nemea</title>
+    <title>Nemea | Create Music</title>
+    <meta name="description" content="Nemeaの音楽活動、最新リリース、楽曲提供、出演実績を紹介するオフィシャルポートフォリオ。">
+    <meta name="theme-color" content="#f4f6f9">
+    <link rel="canonical" href="https://nemea.jp/">
+
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="ja_JP">
+    <meta property="og:site_name" content="Nemea">
+    <meta property="og:title" content="Nemea | Create Music">
+    <meta property="og:description" content="Nemeaの音楽活動、最新リリース、楽曲提供、出演実績をご紹介します。">
+    <meta property="og:url" content="https://nemea.jp/">
+    <meta property="og:image" content="https://nemea.jp/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Nemea | Create Music">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:creator" content="@Nemea_x">
+    <meta name="twitter:title" content="Nemea | Create Music">
+    <meta name="twitter:description" content="Nemeaの音楽活動、最新リリース、楽曲提供、出演実績をご紹介します。">
+    <meta name="twitter:image" content="https://nemea.jp/og-image.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Noto+Sans+JP:wght@400;500;700&amp;display=swap" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <!-- Favicon -->
@@ -18,9 +37,14 @@
             --bg-color: #f4f6f9;
             --text-color: #333333;
             --accent-color: #3b82f6; /* 鮮やかな青 */
+            --accent-dark: #2563eb;
             --card-bg: #ffffff;
             --shadow: 0 10px 30px rgba(0,0,0,0.05);
         }
+
+        *, *::before, *::after { box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; }
 
         body {
             margin: 0;
@@ -30,11 +54,27 @@
             line-height: 1.8;
             background-image: radial-gradient(#e1e1e1 1px, transparent 1px);
             background-size: 20px 20px;
-            scroll-behavior: smooth; /* セクション移動を滑らかに */
         }
 
         a { text-decoration: none; color: var(--text-color); transition: 0.3s; }
         a:hover { color: var(--accent-color); }
+        a:focus-visible,
+        button:focus-visible {
+            outline: 3px solid rgba(59, 130, 246, 0.55);
+            outline-offset: 4px;
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
 
         /* Header */
         header {
@@ -56,13 +96,27 @@
             justify-content: space-between;
             align-items: center;
             box-sizing: border-box;
+            position: relative;
         }
         
-        .logo { font-weight: 800; font-size: 1.5rem; letter-spacing: 1px; }
+        .logo { font-weight: 800; font-size: 1.5rem; letter-spacing: 1px; color: #222; }
         
-        nav ul { list-style: none; display: flex; gap: 40px; padding: 0; margin: 0; }
+        nav ul { list-style: none; display: flex; gap: 28px; padding: 0; margin: 0; }
         nav ul li a { font-weight: 700; font-size: 0.9rem; color: #555; }
         nav ul li a:hover { color: var(--accent-color); }
+
+        .menu-toggle {
+            display: none;
+            width: 44px;
+            height: 44px;
+            border: 0;
+            border-radius: 12px;
+            background: #eef4ff;
+            color: #1f2937;
+            font: inherit;
+            font-size: 1.1rem;
+            cursor: pointer;
+        }
 
         /* Main */
         main { padding-top: 120px; padding-bottom: 80px; }
@@ -130,7 +184,7 @@
         }
         
         /* テキスト色調整（背景が出た時用） */
-        .profile-area.bg-active .profile-text h3,
+        .profile-area.bg-active .profile-text h1,
         .profile-area.bg-active .profile-text p {
             color: #fff;
             text-shadow: 0 2px 4px rgba(0,0,0,0.5);
@@ -168,7 +222,7 @@
             box-shadow: 0 25px 50px rgba(59, 130, 246, 0.4);
         }
 
-        .profile-text h3 { font-size: 2.5rem; margin: 0 0 10px; }
+        .profile-text h1 { font-size: 2.5rem; line-height: 1.2; margin: 0 0 10px; color: #111; }
         .profile-sub { color: var(--accent-color); font-weight: 700; margin-bottom: 20px; display: block; }
 
         /* Social Icons in Profile */
@@ -282,6 +336,7 @@
         /* Hide other sections while profile icon hover */
         .global-bg-active #news,
         .global-bg-active #works,
+        .global-bg-active #achievement,
         .global-bg-active #contact {
             opacity: 0;
             pointer-events: none;
@@ -440,23 +495,58 @@
         .copyable {
             cursor: pointer;
             transition: color 0.2s ease;
+            appearance: none;
+            border: 0;
+            background: transparent;
+            padding: 4px 7px;
+            border-radius: 8px;
+            color: inherit;
+            font: inherit;
+            font-weight: 700;
         }
         .copyable:hover {
             color: var(--accent-color);
+            background: #eef4ff;
         }
         .copyable.copied {
             color: var(--accent-color);
             text-decoration: underline;
         }
 
-        /* 375px以下はナビゲーションを非表示 */
-        @media (max-width: 375px) {
+        /* Compact navigation */
+        @media (max-width: 780px) {
+            header { padding: 14px 0; }
+            .header-inner { padding: 0 20px; }
+            .menu-toggle { display: grid; place-items: center; }
             header nav {
-                display: none;
+                position: absolute;
+                top: calc(100% + 15px);
+                left: 16px;
+                right: 16px;
+                padding: 10px;
+                border: 1px solid rgba(148, 163, 184, 0.22);
+                border-radius: 16px;
+                background: rgba(255, 255, 255, 0.98);
+                box-shadow: 0 18px 50px rgba(15, 23, 42, 0.14);
+                opacity: 0;
+                visibility: hidden;
+                transform: translateY(-8px);
+                transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
             }
-            .header-inner {
-                justify-content: center;
+            header nav.is-open {
+                opacity: 1;
+                visibility: visible;
+                transform: translateY(0);
             }
+            header nav ul { flex-direction: column; gap: 0; }
+            header nav ul li a {
+                display: block;
+                padding: 11px 14px;
+                border-radius: 10px;
+            }
+            header nav ul li a:hover { background: #f1f5f9; }
+            main { padding-top: 100px; }
+            section { scroll-margin-top: 92px; }
         }
 
         /* Tablet landscape調整 (PCより狭い幅) */
@@ -499,6 +589,17 @@
             .container { padding: 0 16px; }
         }
 
+        @media (max-width: 480px) {
+            section { margin-bottom: 90px; }
+            h2 { font-size: 2rem; margin-bottom: 38px; }
+            .profile-area { padding: 30px 20px; }
+            .profile-icon { width: 180px; height: 180px; }
+            .profile-text h1 { font-size: 2.15rem; }
+            .works-grid { grid-template-columns: 1fr; }
+            .contact-area { padding: 44px 16px; }
+            .contact-btn { width: 100%; padding: 14px 18px; }
+        }
+
         /* 425px程度：さらに拡大 */
         @media (max-width: 425px) {
             .profile-bg-reveal {
@@ -522,17 +623,32 @@
                 background-position: center 34%;
             }
         }
+
+        @media (prefers-reduced-motion: reduce) {
+            html { scroll-behavior: auto; }
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="global-bg" id="globalBg" data-bg="chunno-wu-houni-kongni-huiku-ji-yun-yun-meishii-jing-se-bei-jingnoaitea (1).jpg"></div>
+    <div class="global-bg" id="globalBg" data-bg="profile-global-bg-1920.jpg" aria-hidden="true"></div>
     <header>
         <div class="header-inner">
-            <div class="logo">Nemea</div>
-            <nav>
+            <a class="logo" href="#profile" aria-label="Nemea ホーム">Nemea</a>
+            <button class="menu-toggle" id="menuToggle" type="button" aria-controls="primaryNavigation" aria-expanded="false">
+                <span class="sr-only" id="menuToggleLabel">メニューを開く</span>
+                <i class="fa-solid fa-bars" aria-hidden="true"></i>
+            </button>
+            <nav id="primaryNavigation" aria-label="メインナビゲーション">
                 <ul>
                     <li><a href="#profile">PROFILE</a></li>
+                    <li><a href="#news">NEWS</a></li>
                     <li><a href="#works">WORKS</a></li>
+                    <li><a href="#achievement">ACHIEVEMENT</a></li>
                     <li><a href="#contact">CONTACT</a></li>
                 </ul>
             </nav>
@@ -545,13 +661,13 @@
             <section id="profile">
                 <div class="profile-area" id="profileArea">
                     <!-- 背景演出用要素 -->
-                    <div class="profile-bg-reveal lazy-bg" data-bg="Aurora_MV-0003.png"></div>
+                    <div class="profile-bg-reveal lazy-bg" data-bg="Aurora_MV-0003-1600.jpg" aria-hidden="true"></div>
                     
                     <!-- アイコン -->
-                    <div class="profile-icon" id="profileIcon" data-bg="Nemea_kun_icon.png"></div>
+                    <div class="profile-icon" id="profileIcon" data-bg="Nemea_kun_icon-500.jpg" role="img" aria-label="Nemeaのプロフィールイラスト"></div>
                     
                     <div class="profile-text">
-                        <h3>Nemea</h3>
+                        <h1>Nemea</h1>
                         <span class="profile-sub">Create Music</span>
                         <p>
                             夏とサウナとEDMが好き。
@@ -560,28 +676,28 @@
                         <!-- SNS Links -->
                         <div class="social-links">
                             <!-- YouTube -->
-                            <a href="https://www.youtube.com/@Nemea_x" target="_blank" class="social-icon" title="YouTube">
-                                <i class="fa-brands fa-youtube"></i>
+                            <a href="https://www.youtube.com/@Nemea_x" target="_blank" rel="noopener noreferrer" class="social-icon" title="YouTube" aria-label="YouTubeでNemeaを見る">
+                                <i class="fa-brands fa-youtube" aria-hidden="true"></i>
                             </a>
                             <!-- Niconico (User Image Placeholder) -->
-                            <a href="https://sp.nicovideo.jp/user/120910683/video" target="_blank" class="social-icon custom-img-icon nico-icon" title="Niconico">
-                                <img src="s-512x512_webp_20ae26e6-1694-4381-804f-2ca72d54bc3c.png" alt="Niconico" loading="lazy" decoding="async" width="45" height="45">
+                            <a href="https://sp.nicovideo.jp/user/120910683/video" target="_blank" rel="noopener noreferrer" class="social-icon custom-img-icon nico-icon" title="Niconico" aria-label="ニコニコでNemeaを見る">
+                                <img src="s-512x512_webp_20ae26e6-1694-4381-804f-2ca72d54bc3c.png" alt="" decoding="async" width="45" height="45">
                             </a>
                             <!-- Spotify -->
-                            <a href="https://open.spotify.com/intl-ja/artist/4JJdclKTjDAQjU3MOEHxIg" target="_blank" class="social-icon" title="Spotify">
-                                <i class="fa-brands fa-spotify"></i>
+                            <a href="https://open.spotify.com/intl-ja/artist/4JJdclKTjDAQjU3MOEHxIg" target="_blank" rel="noopener noreferrer" class="social-icon" title="Spotify" aria-label="SpotifyでNemeaを聴く">
+                                <i class="fa-brands fa-spotify" aria-hidden="true"></i>
                             </a>
                             <!-- Apple Music (Custom Image) -->
-                            <a href="https://music.apple.com/jp/artist/nemea/1759992210" target="_blank" class="social-icon custom-img-icon" title="Apple Music">
-                                <img src="s-1102x1084_v-fs_webp_c2e4a516-708d-4f26-964f-8a75149115d3.png" alt="Apple Music" loading="lazy" decoding="async" width="45" height="45">
+                            <a href="https://music.apple.com/jp/artist/nemea/1759992210" target="_blank" rel="noopener noreferrer" class="social-icon custom-img-icon" title="Apple Music" aria-label="Apple MusicでNemeaを聴く">
+                                <img src="s-1102x1084_v-fs_webp_c2e4a516-708d-4f26-964f-8a75149115d3.png" alt="" decoding="async" width="45" height="45">
                             </a>
                             <!-- X (Twitter) -->
-                            <a href="https://x.com/Nemea_x" target="_blank" class="social-icon x-twitter" title="X (Twitter)">
-                                <i class="fa-brands fa-x-twitter"></i>
+                            <a href="https://x.com/Nemea_x" target="_blank" rel="noopener noreferrer" class="social-icon x-twitter" title="X (Twitter)" aria-label="XでNemeaを見る">
+                                <i class="fa-brands fa-x-twitter" aria-hidden="true"></i>
                             </a>
                             <!-- Mail -->
-                            <a href="mailto:nemea79@gmail.com" class="social-icon" title="Mail">
-                                <i class="fa-solid fa-envelope"></i>
+                            <a href="mailto:nemea79@gmail.com" class="social-icon" title="Mail" aria-label="Nemeaにメールを送る">
+                                <i class="fa-solid fa-envelope" aria-hidden="true"></i>
                             </a>
                         </div>
                     </div>
@@ -591,13 +707,13 @@
             <!-- NEWS -->
             <section id="news">
                 <h2>NEWS</h2>
-                <a href="https://big-up.style/AVSOf3CZse" target="_blank" class="news-feature lazy-bg" data-bg="Will_jacket.png">
+                <a href="https://big-up.style/AVSOf3CZse" target="_blank" rel="noopener noreferrer" class="news-feature lazy-bg" data-bg="Will_jacket-1600.jpg">
                     <div class="news-content">
                         <span class="news-title">New Single「Will」</span>
                         <p class="news-desc">「Will feat.重音テト」リリースしました！</p>
                     </div>
                 </a>
-                <a href="https://youtu.be/0CmoKWCAXqQ" target="_blank" class="news-feature lazy-bg" data-bg="imagae.png">
+                <a href="https://youtu.be/0CmoKWCAXqQ" target="_blank" rel="noopener noreferrer" class="news-feature lazy-bg" data-bg="Aurora_MV-1600.jpg">
                     <div class="news-content">
                         <span class="news-title">MV『Aurora』</span>
                         <p class="news-desc">新曲「Aurora」のMVを投稿しました。</p>
@@ -615,7 +731,7 @@
                             <span class="work-meta">Providing Music / Album</span>
                             <span class="work-title">BLACK ROSE 1st Album "Break Day"</span>
                             <p class="work-desc">BLACK ROSE 1stアルバムに「Break Day」楽曲提供。</p>
-                            <a href="https://shakirari.theshop.jp/items/98733310?fbclid=PAY2xjawIf6yBleHRuA2FlbQIxMQABpqxT8hsV4uhqkCT1Jl4rF2Jw12Uhu4YeMXYQEhyUS6KJHblxiTRkWhOIdw_aem_trZCgNEzppxs8cJattoyAA" target="_blank" class="work-link">View Shop <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+                            <a href="https://shakirari.theshop.jp/items/98733310?fbclid=PAY2xjawIf6yBleHRuA2FlbQIxMQABpqxT8hsV4uhqkCT1Jl4rF2Jw12Uhu4YeMXYQEhyUS6KJHblxiTRkWhOIdw_aem_trZCgNEzppxs8cJattoyAA" target="_blank" rel="noopener noreferrer" class="work-link">View Shop <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a>
                         </div>
                     </article>
 
@@ -625,7 +741,7 @@
                             <span class="work-meta">Event / Live</span>
                             <span class="work-title">アイドルプラネタリウム VOL.156</span>
                             <p class="work-desc">BLACK ROSEさんに「ラディアンス」を歌って頂きました。</p>
-                            <a href="https://tiget.net/events/344771" target="_blank" class="work-link">Event Info <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+                            <a href="https://tiget.net/events/344771" target="_blank" rel="noopener noreferrer" class="work-link">Event Info <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a>
                         </div>
                     </article>
                     
@@ -664,9 +780,12 @@
                     <div style="margin: 20px 0;">
                         <a href="mailto:nemea79@gmail.com" class="contact-btn">nemea79@gmail.com</a>
                         <p style="margin-top: 15px; font-weight: bold; font-size: 1.1rem; color: #333;">
-                            <i class="fa-brands fa-discord" style="color: #5865F2; margin-right: 5px;"></i>
+                            <i class="fa-brands fa-discord" style="color: #5865F2; margin-right: 5px;" aria-hidden="true"></i>
                             <span aria-hidden="true">Discord:</span>
-                            <span id="discordCopy" class="copyable" aria-label="Discord IDをコピー" style="margin-left: 4px;">nm79</span>
+                            <button type="button" id="discordCopy" class="copyable" aria-describedby="copyStatus" style="margin-left: 4px;">
+                                nm79 <i class="fa-regular fa-copy" aria-hidden="true"></i>
+                            </button>
+                            <span id="copyStatus" class="sr-only" aria-live="polite"></span>
                         </p>
                     </div>
                     
@@ -679,7 +798,7 @@
     </main>
     
     <footer style="text-align: center; padding: 40px; color: #888; font-size: 0.8rem;">
-        &copy; 2025 by Nemea.
+        &copy; <span id="currentYear">2026</span> by Nemea.
     </footer>
 
     <script>
@@ -688,8 +807,48 @@
         const profileArea = document.getElementById('profileArea');
         const bodyEl = document.body;
         const discordCopyEl = document.getElementById('discordCopy');
+        const copyStatusEl = document.getElementById('copyStatus');
         const headerEl = document.querySelector('header');
         const globalBgEl = document.getElementById('globalBg');
+        const menuToggleEl = document.getElementById('menuToggle');
+        const menuToggleLabelEl = document.getElementById('menuToggleLabel');
+        const primaryNavigationEl = document.getElementById('primaryNavigation');
+        const currentYearEl = document.getElementById('currentYear');
+
+        const setMenuOpen = (isOpen) => {
+            if (!menuToggleEl || !primaryNavigationEl) return;
+            primaryNavigationEl.classList.toggle('is-open', isOpen);
+            menuToggleEl.setAttribute('aria-expanded', String(isOpen));
+            if (menuToggleLabelEl) {
+                menuToggleLabelEl.textContent = isOpen ? 'メニューを閉じる' : 'メニューを開く';
+            }
+            const icon = menuToggleEl.querySelector('i');
+            if (icon) {
+                icon.className = isOpen ? 'fa-solid fa-xmark' : 'fa-solid fa-bars';
+            }
+        };
+
+        if (menuToggleEl && primaryNavigationEl) {
+            menuToggleEl.addEventListener('click', () => {
+                const isOpen = menuToggleEl.getAttribute('aria-expanded') === 'true';
+                setMenuOpen(!isOpen);
+            });
+
+            document.addEventListener('keydown', (event) => {
+                if (event.key === 'Escape') {
+                    setMenuOpen(false);
+                    menuToggleEl.focus();
+                }
+            });
+
+            window.addEventListener('resize', () => {
+                if (window.innerWidth > 780) setMenuOpen(false);
+            });
+        }
+
+        if (currentYearEl) {
+            currentYearEl.textContent = String(new Date().getFullYear());
+        }
 
         profileArea.addEventListener('mouseenter', () => {
             profileArea.classList.add('bg-hover');
@@ -716,9 +875,11 @@
                 try {
                     await navigator.clipboard.writeText('nm79');
                     discordCopyEl.classList.add('copied');
+                    if (copyStatusEl) copyStatusEl.textContent = 'Discord IDをコピーしました';
                     setTimeout(() => discordCopyEl.classList.remove('copied'), 1200);
                 } catch (e) {
                     console.error('Clipboard copy failed', e);
+                    if (copyStatusEl) copyStatusEl.textContent = 'コピーできませんでした';
                 }
             });
         }
@@ -776,6 +937,7 @@
         document.querySelectorAll('nav a[href^="#"]').forEach(link => {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
+                setMenuOpen(false);
                 const targetId = link.getAttribute('href').slice(1);
                 const targetEl = document.getElementById(targetId);
                 if (!targetEl) return;
