@@ -150,6 +150,81 @@
             z-index: 2;
         }
 
+        /* 実際に通った軌道の一部だけを、遅れて淡く蘇らせる「記憶」のレイヤー */
+        .memory-trace-canvas {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 880;
+            opacity: 0.86;
+            mix-blend-mode: screen;
+            filter: saturate(0.9);
+            contain: strict;
+            transition: opacity 0.55s ease, filter 0.55s ease;
+        }
+
+        /* 太陽光が主役のときは、過去の光をさらに一歩だけ引かせる */
+        .global-bg-active .memory-trace-canvas {
+            opacity: 0.56;
+            filter: saturate(0.82) brightness(0.94);
+        }
+
+        /* クリック地点から、通常のカーソル光より一回りだけ広くほどける光 */
+        .click-bloom-layer {
+            position: fixed;
+            inset: 0;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 890;
+            contain: strict;
+        }
+
+        .click-bloom {
+            --bloom-rgb: 176, 216, 255;
+            --bloom-core-rgb: 241, 249, 255;
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: clamp(280px, 28vw, 410px);
+            aspect-ratio: 1;
+            border-radius: 50%;
+            opacity: 0;
+            pointer-events: none;
+            mix-blend-mode: screen;
+            background: radial-gradient(circle,
+                rgba(var(--bloom-core-rgb), 0.27) 0%,
+                rgba(var(--bloom-rgb), 0.15) 9%,
+                rgba(var(--bloom-rgb), 0.065) 30%,
+                rgba(var(--bloom-rgb), 0.022) 52%,
+                transparent 73%);
+            filter: blur(2px) saturate(0.9);
+            transform: translate3d(-50%, -50%, 0) scale(0.04);
+            transform-origin: center;
+            will-change: transform, opacity, filter;
+            animation:
+                click-bloom-scale 1.18s cubic-bezier(0.16, 0.68, 0.24, 1) forwards,
+                click-bloom-fade 1.18s linear forwards;
+        }
+
+        .click-bloom::before {
+            content: '';
+            position: absolute;
+            inset: 10%;
+            border-radius: 50%;
+            background: radial-gradient(circle,
+                transparent 48%,
+                rgba(var(--bloom-rgb), 0.09) 60%,
+                transparent 72%);
+            filter: blur(3px);
+        }
+
+        .click-bloom.is-warm {
+            --bloom-rgb: 255, 211, 143;
+            --bloom-core-rgb: 255, 251, 225;
+        }
+
         /* ポインターを淡い補助光源として見せるカーソルライト */
         .cursor-light {
             position: fixed;
@@ -198,6 +273,29 @@
         .global-bg-active .cursor-light::before {
             background: rgba(255, 249, 216, 0.30);
             box-shadow: 0 0 30px rgba(255, 215, 145, 0.22);
+        }
+
+        @keyframes click-bloom-scale {
+            0% {
+                transform: translate3d(-50%, -50%, 0) scale(0.04);
+            }
+            100% {
+                transform: translate3d(-50%, -50%, 0) scale(1);
+            }
+        }
+
+        @keyframes click-bloom-fade {
+            0% {
+                opacity: 0;
+                filter: blur(1px) saturate(0.9);
+            }
+            12% { opacity: 0.92; }
+            52% { opacity: 0.48; }
+            78% { opacity: 0.22; }
+            100% {
+                opacity: 0;
+                filter: blur(9px) saturate(0.78);
+            }
         }
 
         /* 夏の空へ切り替わるホバー時は、左上から暖かい太陽光を強める */
@@ -912,6 +1010,12 @@
             .profile-area { padding: 30px 20px; }
             .profile-icon { width: 180px; height: 180px; }
             .profile-text h1 { font-size: 2.15rem; }
+            .social-links {
+                display: grid;
+                grid-template-columns: repeat(3, 45px);
+                justify-content: center;
+                gap: 14px 16px;
+            }
             .works-grid { grid-template-columns: 1fr; }
             .contact-area { padding: 44px 16px; }
             .contact-btn { width: 100%; padding: 14px 18px; }
@@ -953,6 +1057,8 @@
             .ambient-sparkles span,
             .global-bg-active .ambient-light::before,
             .global-bg-active .ambient-light::after { animation: none !important; }
+            .memory-trace-canvas,
+            .click-bloom-layer { display: none; }
             *, *::before, *::after {
                 animation-duration: 0.01ms !important;
                 animation-iteration-count: 1 !important;
@@ -961,7 +1067,9 @@
         }
 
         @media (hover: none), (pointer: coarse) {
-            .cursor-light { display: none; }
+            .cursor-light,
+            .memory-trace-canvas,
+            .click-bloom-layer { display: none; }
         }
     </style>
 </head>
@@ -974,6 +1082,8 @@
         </div>
         <canvas class="lens-flare-canvas" id="lensFlareCanvas"></canvas>
     </div>
+    <canvas class="memory-trace-canvas" id="memoryTraceCanvas" aria-hidden="true"></canvas>
+    <div class="click-bloom-layer" id="clickBloomLayer" aria-hidden="true"></div>
     <div class="cursor-light" id="cursorLight" aria-hidden="true"></div>
     <header>
         <div class="header-inner">
@@ -1154,12 +1264,23 @@
         const primaryNavigationEl = document.getElementById('primaryNavigation');
         const currentYearEl = document.getElementById('currentYear');
         const cursorLightEl = document.getElementById('cursorLight');
+        const memoryTraceCanvasEl = document.getElementById('memoryTraceCanvas');
+        const clickBloomLayerEl = document.getElementById('clickBloomLayer');
         const lensFlareCanvasEl = document.getElementById('lensFlareCanvas');
         const reducedMotionMedia = window.matchMedia('(prefers-reduced-motion: reduce)');
         const finePointerMedia = window.matchMedia('(hover: hover) and (pointer: fine)');
         const lensFlareContext = lensFlareCanvasEl
             ? lensFlareCanvasEl.getContext('2d', { alpha: true })
             : null;
+        const memoryTraceContext = memoryTraceCanvasEl
+            ? memoryTraceCanvasEl.getContext('2d', { alpha: true })
+            : null;
+        const summerInactiveTargets = [
+            primaryNavigationEl,
+            menuToggleEl,
+            document.querySelector('.social-links'),
+            ...document.querySelectorAll('#news, #works, #achievement, #contact')
+        ].filter(Boolean);
 
         let lensFlareFrameId = 0;
         let lensFlareLastFrameTime = 0;
@@ -1176,6 +1297,31 @@
         let cursorLightY = 0;
         let cursorLightTargetX = 0;
         let cursorLightTargetY = 0;
+        let memoryTraceWidth = 0;
+        let memoryTraceHeight = 0;
+        let memoryTraceFrameId = 0;
+        let memoryTraceTimerId = 0;
+        let memoryTraceHistory = [];
+        let memoryTraceGhosts = [];
+        let memoryTracePathId = 0;
+        let memoryTraceLastSampleTime = 0;
+        let memoryTraceLastPageX = 0;
+        let memoryTraceLastPageY = 0;
+        let summerModeVisible = false;
+        let summerModePinned = false;
+        let summerModeHovered = false;
+        let suppressSummerHoverUntilLeave = false;
+
+        const MEMORY_TRACE_MAX_POINTS = 360;
+        const MEMORY_TRACE_MAX_AGE = 28000;
+        const MEMORY_TRACE_DELAY = 2500;
+        const MEMORY_TRACE_ECHO_MAX_AGE = 18000;
+        const MEMORY_TRACE_REPEAT_MIN = 4800;
+        const MEMORY_TRACE_REPEAT_RANGE = 2400;
+        const MEMORY_TRACE_TARGET_MIN_LENGTH = 340;
+        const MEMORY_TRACE_TARGET_MAX_LENGTH = 620;
+        const MEMORY_TRACE_RENDER_MAX_POINTS = 32;
+        const CLICK_BLOOM_DURATION = 1180;
 
         const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
         const rgba = (rgb, alpha) => (
@@ -1226,16 +1372,385 @@
             cursorLightFrameId = 0;
         };
 
+        const spawnClickBloom = event => {
+            if (
+                !clickBloomLayerEl
+                || reducedMotionMedia.matches
+                || !finePointerMedia.matches
+                || event.pointerType === 'touch'
+                || event.detail === 0
+                || event.button !== 0
+            ) return;
+
+            const bloom = document.createElement('span');
+            bloom.className = 'click-bloom' + (summerModeVisible ? ' is-warm' : '');
+            bloom.style.left = event.clientX + 'px';
+            bloom.style.top = event.clientY + 'px';
+            clickBloomLayerEl.appendChild(bloom);
+
+            const removeBloom = () => bloom.remove();
+            bloom.addEventListener('animationend', removeBloom, { once: true });
+            window.setTimeout(removeBloom, CLICK_BLOOM_DURATION + 180);
+        };
+
+        const memoryTraceEnabled = () => Boolean(
+            memoryTraceContext
+            && finePointerMedia.matches
+            && !reducedMotionMedia.matches
+            && document.visibilityState === 'visible'
+        );
+
+        const smoothstep = (edge0, edge1, value) => {
+            const progress = clamp((value - edge0) / (edge1 - edge0), 0, 1);
+            return progress * progress * (3 - 2 * progress);
+        };
+
+        const resizeMemoryTraceCanvas = () => {
+            if (!memoryTraceCanvasEl || !memoryTraceContext) return;
+
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            const pixelRatio = Math.min(window.devicePixelRatio || 1, 1.35);
+            const targetWidth = Math.round(width * pixelRatio);
+            const targetHeight = Math.round(height * pixelRatio);
+
+            if (
+                memoryTraceCanvasEl.width !== targetWidth
+                || memoryTraceCanvasEl.height !== targetHeight
+            ) {
+                memoryTraceCanvasEl.width = targetWidth;
+                memoryTraceCanvasEl.height = targetHeight;
+                memoryTraceCanvasEl.style.width = width + 'px';
+                memoryTraceCanvasEl.style.height = height + 'px';
+            }
+
+            memoryTraceWidth = width;
+            memoryTraceHeight = height;
+            memoryTraceContext.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+        };
+
+        const clearMemoryTraceCanvas = () => {
+            if (!memoryTraceContext) return;
+            memoryTraceContext.clearRect(0, 0, memoryTraceWidth, memoryTraceHeight);
+        };
+
+        const resetMemoryTrace = (clearHistory = true) => {
+            window.clearTimeout(memoryTraceTimerId);
+            cancelAnimationFrame(memoryTraceFrameId);
+            memoryTraceTimerId = 0;
+            memoryTraceFrameId = 0;
+            memoryTraceGhosts = [];
+
+            if (clearHistory) {
+                memoryTraceHistory = [];
+                memoryTraceLastSampleTime = 0;
+                memoryTracePathId += 1;
+            }
+
+            clearMemoryTraceCanvas();
+        };
+
+        const drawMemoryTracePath = points => {
+            if (!memoryTraceContext || points.length < 2) return;
+
+            memoryTraceContext.beginPath();
+            memoryTraceContext.moveTo(points[0].x, points[0].y);
+
+            for (let i = 1; i < points.length - 1; i += 1) {
+                const point = points[i];
+                const next = points[i + 1];
+                memoryTraceContext.quadraticCurveTo(
+                    point.x,
+                    point.y,
+                    (point.x + next.x) / 2,
+                    (point.y + next.y) / 2
+                );
+            }
+
+            const lastPoint = points[points.length - 1];
+            memoryTraceContext.lineTo(lastPoint.x, lastPoint.y);
+        };
+
+        const drawMemoryGhost = (ghost, now) => {
+            if (!memoryTraceContext) return;
+
+            const progress = (now - ghost.startTime) / ghost.duration;
+            if (progress <= 0 || progress >= 1) return;
+
+            const fadeIn = smoothstep(0, 0.10, progress);
+            const fadeOut = 1 - smoothstep(0.40, 1, progress);
+            const summerRestraint = summerModeVisible ? 0.62 : 1;
+            const intensity = fadeIn * fadeOut * summerRestraint;
+            const color = ghost.warm ? [255, 215, 154] : [168, 208, 255];
+            const coreColor = ghost.warm ? [255, 248, 218] : [235, 247, 255];
+            const points = ghost.points.map(point => ({
+                x: point.x - window.scrollX,
+                y: point.y - window.scrollY
+            }));
+
+            memoryTraceContext.save();
+            memoryTraceContext.globalCompositeOperation = 'screen';
+            memoryTraceContext.lineCap = 'round';
+            memoryTraceContext.lineJoin = 'round';
+            memoryTraceContext.shadowColor = rgba(color, 0.16 * intensity);
+            memoryTraceContext.shadowBlur = 16;
+            memoryTraceContext.strokeStyle = rgba(color, 0.055 * intensity);
+            memoryTraceContext.lineWidth = 5;
+            drawMemoryTracePath(points);
+            memoryTraceContext.stroke();
+
+            memoryTraceContext.shadowBlur = 5;
+            memoryTraceContext.strokeStyle = rgba(coreColor, 0.11 * intensity);
+            memoryTraceContext.lineWidth = 0.9;
+            drawMemoryTracePath(points);
+            memoryTraceContext.stroke();
+
+            points.forEach((point, index) => {
+                const stagger = clamp(progress - index * 0.025, 0, 1);
+                const directionalFade = smoothstep(0, 0.16, stagger);
+                const rhythm = 0.72 + Math.sin(ghost.seed + index * 1.73) * 0.16;
+                const pointIntensity = intensity * directionalFade * rhythm;
+                const radius = 10 + (index % 3) * 2.2;
+                const glow = memoryTraceContext.createRadialGradient(
+                    point.x,
+                    point.y,
+                    0,
+                    point.x,
+                    point.y,
+                    radius
+                );
+                glow.addColorStop(0, rgba(coreColor, 0.12 * pointIntensity));
+                glow.addColorStop(0.24, rgba(color, 0.07 * pointIntensity));
+                glow.addColorStop(1, rgba(color, 0));
+                memoryTraceContext.fillStyle = glow;
+                memoryTraceContext.beginPath();
+                memoryTraceContext.arc(point.x, point.y, radius, 0, Math.PI * 2);
+                memoryTraceContext.fill();
+
+                memoryTraceContext.fillStyle = rgba(coreColor, 0.14 * pointIntensity);
+                memoryTraceContext.beginPath();
+                memoryTraceContext.arc(point.x, point.y, 1.15, 0, Math.PI * 2);
+                memoryTraceContext.fill();
+            });
+
+            memoryTraceContext.restore();
+        };
+
+        const renderMemoryTraces = now => {
+            memoryTraceFrameId = 0;
+
+            if (!memoryTraceEnabled()) {
+                resetMemoryTrace(false);
+                return;
+            }
+
+            resizeMemoryTraceCanvas();
+            clearMemoryTraceCanvas();
+            memoryTraceGhosts = memoryTraceGhosts.filter(
+                ghost => now < ghost.startTime + ghost.duration
+            );
+            memoryTraceGhosts.forEach(ghost => drawMemoryGhost(ghost, now));
+
+            if (memoryTraceGhosts.length > 0) {
+                memoryTraceFrameId = requestAnimationFrame(renderMemoryTraces);
+            }
+        };
+
+        const startMemoryTraceFrame = () => {
+            if (!memoryTraceFrameId && memoryTraceGhosts.length > 0) {
+                memoryTraceFrameId = requestAnimationFrame(renderMemoryTraces);
+            }
+        };
+
+        const measureMemoryPath = points => {
+            let length = 0;
+            for (let i = 1; i < points.length; i += 1) {
+                length += Math.hypot(
+                    points[i].x - points[i - 1].x,
+                    points[i].y - points[i - 1].y
+                );
+            }
+            return length;
+        };
+
+        const reduceMemoryTracePoints = points => {
+            if (points.length <= MEMORY_TRACE_RENDER_MAX_POINTS) return points;
+
+            const reduced = [];
+            for (let i = 0; i < MEMORY_TRACE_RENDER_MAX_POINTS; i += 1) {
+                const index = Math.round(
+                    i * (points.length - 1) / (MEMORY_TRACE_RENDER_MAX_POINTS - 1)
+                );
+                if (reduced[reduced.length - 1] !== points[index]) {
+                    reduced.push(points[index]);
+                }
+            }
+            return reduced;
+        };
+
+        const spawnMemoryEcho = now => {
+            if (!memoryTraceEnabled() || memoryTraceGhosts.length >= 2) return false;
+
+            const isEligible = point => {
+                const age = now - point.time;
+                return (
+                    !point.echoed
+                    && age >= MEMORY_TRACE_DELAY
+                    && age <= MEMORY_TRACE_ECHO_MAX_AGE
+                );
+            };
+
+            const runs = [];
+            let currentRun = [];
+            const finishRun = () => {
+                if (currentRun.length >= 5) runs.push(currentRun);
+                currentRun = [];
+            };
+
+            memoryTraceHistory.forEach(point => {
+                const viewportX = point.x - window.scrollX;
+                const viewportY = point.y - window.scrollY;
+                const isVisible = (
+                    viewportX > -60
+                    && viewportX < memoryTraceWidth + 60
+                    && viewportY > -60
+                    && viewportY < memoryTraceHeight + 60
+                );
+                const followsRun = (
+                    currentRun.length === 0
+                    || currentRun[currentRun.length - 1].pathId === point.pathId
+                );
+
+                if (isEligible(point) && isVisible && followsRun) {
+                    currentRun.push(point);
+                } else {
+                    finishRun();
+                    if (isEligible(point) && isVisible) currentRun.push(point);
+                }
+            });
+            finishRun();
+
+            const drawableRuns = runs
+                .map(points => ({ points, length: measureMemoryPath(points) }))
+                .filter(run => run.length >= 30)
+                .sort((a, b) => (
+                    b.length - a.length
+                    || b.points[b.points.length - 1].time - a.points[a.points.length - 1].time
+                ));
+
+            if (drawableRuns.length === 0) return false;
+
+            const chosenRun = drawableRuns[0];
+            const targetLength = clamp(
+                memoryTraceWidth * (0.38 + Math.random() * 0.08),
+                MEMORY_TRACE_TARGET_MIN_LENGTH,
+                MEMORY_TRACE_TARGET_MAX_LENGTH
+            );
+            let pathLength = 0;
+            let endIndex = 0;
+
+            for (let i = 1; i < chosenRun.points.length; i += 1) {
+                pathLength += Math.hypot(
+                    chosenRun.points[i].x - chosenRun.points[i - 1].x,
+                    chosenRun.points[i].y - chosenRun.points[i - 1].y
+                );
+                endIndex = i;
+                if (pathLength >= targetLength && i >= 4) break;
+            }
+
+            const segment = chosenRun.points.slice(0, endIndex + 1);
+            const renderedSegment = reduceMemoryTracePoints(segment);
+            segment.forEach(point => { point.echoed = true; });
+            memoryTraceGhosts.push({
+                points: renderedSegment.map(point => ({ x: point.x, y: point.y })),
+                warm: segment.filter(point => point.warm).length > segment.length / 2,
+                startTime: now,
+                duration: 4000 + Math.random() * 840,
+                seed: Math.random() * Math.PI * 2
+            });
+            startMemoryTraceFrame();
+            return true;
+        };
+
+        const scheduleMemoryEcho = (delay = MEMORY_TRACE_DELAY) => {
+            window.clearTimeout(memoryTraceTimerId);
+            memoryTraceTimerId = 0;
+            if (!memoryTraceEnabled() || memoryTraceHistory.length < 5) return;
+
+            memoryTraceTimerId = window.setTimeout(() => {
+                memoryTraceTimerId = 0;
+                const now = performance.now();
+                const spawned = spawnMemoryEcho(now);
+
+                const hasPendingMemory = memoryTraceHistory.some(point => (
+                    !point.echoed
+                    && now - point.time <= MEMORY_TRACE_ECHO_MAX_AGE
+                ));
+                if (hasPendingMemory) {
+                    const nextDelay = spawned
+                        ? MEMORY_TRACE_REPEAT_MIN + Math.random() * MEMORY_TRACE_REPEAT_RANGE
+                        : 450;
+                    scheduleMemoryEcho(nextDelay);
+                }
+            }, delay);
+        };
+
+        const recordPointerMemory = event => {
+            if (!memoryTraceEnabled() || event.pointerType === 'touch') return;
+
+            const now = performance.now();
+            const pageX = event.clientX + window.scrollX;
+            const pageY = event.clientY + window.scrollY;
+            const gap = now - memoryTraceLastSampleTime;
+            const distance = Math.hypot(
+                pageX - memoryTraceLastPageX,
+                pageY - memoryTraceLastPageY
+            );
+
+            if (memoryTraceHistory.length === 0 || gap > 900 || distance > 360) {
+                memoryTracePathId += 1;
+            } else if ((gap < 52 && distance < 10) || (distance < 7 && gap < 170)) {
+                return;
+            }
+
+            memoryTraceHistory.push({
+                x: pageX,
+                y: pageY,
+                time: now,
+                pathId: memoryTracePathId,
+                warm: summerModeVisible,
+                echoed: false
+            });
+            memoryTraceLastSampleTime = now;
+            memoryTraceLastPageX = pageX;
+            memoryTraceLastPageY = pageY;
+            memoryTraceHistory = memoryTraceHistory
+                .filter(point => now - point.time <= MEMORY_TRACE_MAX_AGE)
+                .slice(-MEMORY_TRACE_MAX_POINTS);
+
+            scheduleMemoryEcho(MEMORY_TRACE_DELAY);
+        };
+
+        resizeMemoryTraceCanvas();
+
         document.addEventListener('pointermove', event => {
             if (event.pointerType === 'touch') return;
             showCursorLight(event.clientX, event.clientY);
+            recordPointerMemory(event);
         }, { passive: true });
         document.documentElement.addEventListener('mouseleave', hideCursorLight);
         window.addEventListener('blur', hideCursorLight);
+        document.addEventListener('click', spawnClickBloom, { passive: true });
 
         if (typeof finePointerMedia.addEventListener === 'function') {
             finePointerMedia.addEventListener('change', event => {
-                if (!event.matches) hideCursorLight();
+                if (!event.matches) {
+                    hideCursorLight();
+                    resetMemoryTrace(true);
+                    return;
+                }
+                resizeMemoryTraceCanvas();
+                scheduleMemoryEcho();
             });
         }
 
@@ -1592,12 +2107,34 @@
             }, 720);
         };
 
-        const setSummerMode = (isActive) => {
+        const updateSummerMode = () => {
             if (!profileArea || !profileIcon) return;
+            const isActive = summerModePinned || summerModeHovered;
+            if (summerModeVisible === isActive) return;
+
+            summerModeVisible = isActive;
             profileArea.classList.toggle('bg-active', isActive);
             bodyEl.classList.toggle('global-bg-active', isActive);
-            profileIcon.setAttribute('aria-pressed', String(isActive));
+            summerInactiveTargets.forEach(target => { target.inert = isActive; });
             setLensFlareActive(isActive);
+        };
+
+        const setSummerPinned = isPinned => {
+            if (!profileIcon) return;
+            summerModePinned = isPinned;
+            profileIcon.setAttribute('aria-pressed', String(isPinned));
+            profileIcon.setAttribute(
+                'aria-label',
+                isPinned
+                    ? '夏の空と太陽光の演出を閉じる'
+                    : '夏の空と太陽光の演出を表示'
+            );
+            updateSummerMode();
+        };
+
+        const setSummerHovered = isHovered => {
+            summerModeHovered = isHovered;
+            updateSummerMode();
         };
 
         const setMenuOpen = (isOpen) => {
@@ -1619,10 +2156,20 @@
                 setMenuOpen(!isOpen);
             });
 
-            document.addEventListener('keydown', (event) => {
-                if (event.key === 'Escape') {
+            document.addEventListener('keydown', event => {
+                if (event.key !== 'Escape') return;
+
+                const menuWasOpen = menuToggleEl.getAttribute('aria-expanded') === 'true';
+                if (menuWasOpen) {
                     setMenuOpen(false);
                     menuToggleEl.focus();
+                }
+
+                if (summerModePinned) {
+                    summerModeHovered = false;
+                    suppressSummerHoverUntilLeave = true;
+                    setSummerPinned(false);
+                    profileIcon.focus();
                 }
             });
 
@@ -1642,24 +2189,34 @@
 
             profileArea.addEventListener('mouseleave', () => {
                 profileArea.classList.remove('bg-hover');
-                if (document.activeElement !== profileIcon) {
-                    setSummerMode(false);
-                }
+                suppressSummerHoverUntilLeave = false;
+                setSummerHovered(false);
             });
 
-            profileIcon.addEventListener('mouseenter', () => setSummerMode(true));
-            profileIcon.addEventListener('mouseleave', () => {
-                if (document.activeElement !== profileIcon) {
-                    setSummerMode(false);
+            profileIcon.addEventListener('mouseenter', () => {
+                if (finePointerMedia.matches && !suppressSummerHoverUntilLeave) {
+                    setSummerHovered(true);
                 }
+            });
+            profileIcon.addEventListener('mouseleave', () => {
+                suppressSummerHoverUntilLeave = false;
+                setSummerHovered(false);
             });
             profileIcon.addEventListener('focus', () => {
                 profileArea.classList.add('bg-hover');
-                setSummerMode(true);
             });
             profileIcon.addEventListener('blur', () => {
-                profileArea.classList.remove('bg-hover');
-                setSummerMode(false);
+                if (!profileArea.matches(':hover')) {
+                    profileArea.classList.remove('bg-hover');
+                }
+            });
+            profileIcon.addEventListener('click', () => {
+                const nextPinned = !summerModePinned;
+                if (!nextPinned) {
+                    summerModeHovered = false;
+                    suppressSummerHoverUntilLeave = true;
+                }
+                setSummerPinned(nextPinned);
             });
             profileIcon.addEventListener('pointermove', event => {
                 const rect = profileIcon.getBoundingClientRect();
@@ -1672,18 +2229,46 @@
             });
         }
 
+        document.addEventListener('pointerdown', event => {
+            if (
+                summerModePinned
+                && profileArea
+                && !profileArea.contains(event.target)
+            ) {
+                summerModeHovered = false;
+                suppressSummerHoverUntilLeave = true;
+                setSummerPinned(false);
+            }
+        }, { passive: true });
+
         window.addEventListener('resize', () => {
             resizeLensFlareCanvas();
+            resizeMemoryTraceCanvas();
             if (lensFlareActive && reducedMotionMedia.matches) {
                 drawLensFlare(1600);
             }
         });
 
         if (typeof reducedMotionMedia.addEventListener === 'function') {
-            reducedMotionMedia.addEventListener('change', () => {
+            reducedMotionMedia.addEventListener('change', event => {
                 if (lensFlareActive) setLensFlareActive(true);
+                resetMemoryTrace(true);
+                if (!event.matches) {
+                    resizeMemoryTraceCanvas();
+                    scheduleMemoryEcho();
+                }
             });
         }
+
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'hidden') {
+                hideCursorLight();
+                resetMemoryTrace(true);
+                return;
+            }
+            resizeMemoryTraceCanvas();
+            scheduleMemoryEcho();
+        });
 
         // Discord ID copy
         if (discordCopyEl) {
