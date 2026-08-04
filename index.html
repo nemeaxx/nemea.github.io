@@ -44,7 +44,16 @@
 
         *, *::before, *::after { box-sizing: border-box; }
 
-        html { scroll-behavior: smooth; }
+        html {
+            scroll-behavior: smooth;
+            scrollbar-gutter: stable;
+        }
+
+        html.summer-pinned,
+        body.summer-pinned {
+            overflow: hidden;
+            overscroll-behavior: none;
+        }
 
         body {
             margin: 0;
@@ -370,8 +379,29 @@
         a:hover { color: var(--accent-color); }
         a:focus-visible,
         button:focus-visible {
-            outline: 3px solid rgba(59, 130, 246, 0.55);
-            outline-offset: 4px;
+            outline: 3px solid #f7fbff;
+            outline-offset: 3px;
+            box-shadow: 0 0 0 6px #315f9d;
+        }
+
+        .skip-link {
+            position: fixed;
+            top: 14px;
+            left: 14px;
+            z-index: 2000;
+            padding: 10px 16px;
+            border-radius: 12px;
+            background: #f7fbff;
+            color: #0b1a33;
+            font-weight: 800;
+            line-height: 1.4;
+            transform: translateY(calc(-100% - 24px));
+            transition: transform 0.2s ease;
+        }
+
+        .skip-link:focus-visible {
+            color: #0b1a33;
+            transform: translateY(0);
         }
 
         .sr-only {
@@ -496,7 +526,7 @@
             left: -2px;
             width: calc(100% + 4px);  /* 左右2px分はみ出させ、枠でトリミング */
             height: calc(100% + 4px); /* 上下も均等に伸ばして比率を保つ */
-            background-color: #cfd8e3;
+            background-color: #152b45;
             background-size: cover; /* PC：デフォルトに戻す */
             background-position: center;
             background-repeat: no-repeat;
@@ -557,6 +587,16 @@
         .profile-icon:hover {
             transform: rotate(0deg) scale(1.05);
             box-shadow: 0 25px 56px rgba(58, 111, 189, 0.34), 0 0 0 1px rgba(220, 238, 255, 0.24);
+        }
+
+        .profile-icon-image {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            pointer-events: none;
+            user-select: none;
         }
 
         .profile-text h1 { font-size: 2.5rem; line-height: 1.2; margin: 0 0 10px; color: #e9eff8; }
@@ -705,6 +745,34 @@
         .global-bg-active .logo {
             color: #fff;
             text-shadow: 0 4px 16px rgba(0,0,0,0.4);
+        }
+
+        .summer-mode-close {
+            position: fixed;
+            top: 18px;
+            right: 24px;
+            z-index: 1200;
+            min-height: 44px;
+            padding: 10px 16px;
+            border: 1px solid rgba(247, 251, 255, 0.76);
+            border-radius: 999px;
+            background: rgba(11, 26, 51, 0.76);
+            color: #f7fbff;
+            font: inherit;
+            font-size: 0.86rem;
+            font-weight: 800;
+            letter-spacing: 0.02em;
+            cursor: pointer;
+            box-shadow: 0 10px 32px rgba(0, 0, 0, 0.28);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .summer-mode-close[hidden] { display: none; }
+
+        .summer-mode-close:hover {
+            background: rgba(20, 45, 82, 0.92);
+            color: #fff;
         }
 
         /* News */
@@ -987,8 +1055,9 @@
                 left: 0;
                 width: 100%;
                 height: 100%;
-                background-size: 200%; /* モバイル：元の設定に戻す */
-                background-position: center 40%; /* 顔が少し上に来るよう位置調整 */
+                /* MVフレーム上下の余白と下端の歌詞を外し、狭幅でも同じ範囲を見せる */
+                background-size: auto 156%;
+                background-position: 52% 37%;
             }
             .social-links { justify-content: center; }
             .news-feature {
@@ -1024,29 +1093,11 @@
                 justify-content: center;
                 flex-wrap: wrap;
             }
-        }
-
-        /* 425px程度：さらに拡大 */
-        @media (max-width: 425px) {
-            .profile-bg-reveal {
-                background-size: 490%;
-                background-position: center 30%;
-            }
-        }
-
-        /* 375px程度：強めに拡大 */
-        @media (max-width: 375px) {
-            .profile-bg-reveal {
-                background-size: 530%;
-                background-position: center 34%;
-            }
-        }
-
-        /* 325px程度：さらに拡大 */
-        @media (max-width: 325px) {
-            .profile-bg-reveal {
-                background-size: 600%;
-                background-position: center 34%;
+            .summer-mode-close {
+                top: 12px;
+                right: 12px;
+                padding: 9px 14px;
+                font-size: 0.8rem;
             }
         }
 
@@ -1074,6 +1125,7 @@
     </style>
 </head>
 <body>
+    <a class="skip-link" href="#main">本文へ移動</a>
     <div class="global-bg" id="globalBg" data-bg="profile-global-bg-1920.jpg" aria-hidden="true"></div>
     <div class="ambient-light" aria-hidden="true">
         <div class="ambient-sparkles">
@@ -1104,7 +1156,9 @@
         </div>
     </header>
 
-    <main>
+    <button class="summer-mode-close" id="summerModeClose" type="button" hidden>通常表示に戻す</button>
+
+    <main id="main" tabindex="-1">
         <div class="container">
             <!-- PROFILE -->
             <section id="profile">
@@ -1113,7 +1167,9 @@
                     <div class="profile-bg-reveal lazy-bg" data-bg="Aurora_MV-0003-1600.jpg" aria-hidden="true"></div>
                     
                     <!-- アイコン -->
-                    <button class="profile-icon" id="profileIcon" type="button" data-bg="Nemea_kun_icon-500.jpg" aria-label="夏の空と太陽光の演出を表示" aria-pressed="false"></button>
+                    <button class="profile-icon" id="profileIcon" type="button" aria-label="夏の空と太陽光の演出を表示" aria-pressed="false">
+                        <img class="profile-icon-image" src="Nemea_kun_icon-500.jpg" alt="" width="500" height="500" loading="eager" fetchpriority="high" decoding="async" draggable="false">
+                    </button>
                     
                     <div class="profile-text">
                         <h1>Nemea</h1>
@@ -1257,7 +1313,6 @@
         const bodyEl = document.body;
         const discordCopyEl = document.getElementById('discordCopy');
         const copyStatusEl = document.getElementById('copyStatus');
-        const headerEl = document.querySelector('header');
         const globalBgEl = document.getElementById('globalBg');
         const menuToggleEl = document.getElementById('menuToggle');
         const menuToggleLabelEl = document.getElementById('menuToggleLabel');
@@ -1267,6 +1322,7 @@
         const memoryTraceCanvasEl = document.getElementById('memoryTraceCanvas');
         const clickBloomLayerEl = document.getElementById('clickBloomLayer');
         const lensFlareCanvasEl = document.getElementById('lensFlareCanvas');
+        const summerModeCloseEl = document.getElementById('summerModeClose');
         const reducedMotionMedia = window.matchMedia('(prefers-reduced-motion: reduce)');
         const finePointerMedia = window.matchMedia('(hover: hover) and (pointer: fine)');
         const lensFlareContext = lensFlareCanvasEl
@@ -1744,6 +1800,7 @@
 
         if (typeof finePointerMedia.addEventListener === 'function') {
             finePointerMedia.addEventListener('change', event => {
+                if (lensFlareActive) setLensFlareActive(true);
                 if (!event.matches) {
                     hideCursorLight();
                     resetMemoryTrace(true);
@@ -2082,6 +2139,10 @@
             lensFlareFrameId = requestAnimationFrame(runLensFlareFrame);
         };
 
+        const shouldAnimateLensFlare = () => (
+            finePointerMedia.matches && !reducedMotionMedia.matches
+        );
+
         const setLensFlareActive = (isActive) => {
             lensFlareActive = isActive;
             window.clearTimeout(lensFlareClearTimer);
@@ -2090,10 +2151,10 @@
 
             if (isActive) {
                 resizeLensFlareCanvas();
-                if (reducedMotionMedia.matches) {
-                    drawLensFlare(1600);
-                } else {
+                if (shouldAnimateLensFlare()) {
                     lensFlareFrameId = requestAnimationFrame(runLensFlareFrame);
+                } else {
+                    drawLensFlare(1600);
                 }
                 return;
             }
@@ -2108,6 +2169,11 @@
         };
 
         const updateSummerMode = () => {
+            bodyEl.classList.toggle('summer-pinned', summerModePinned);
+            document.documentElement.classList.toggle('summer-pinned', summerModePinned);
+            if (summerModeCloseEl) {
+                summerModeCloseEl.hidden = !summerModePinned;
+            }
             if (!profileArea || !profileIcon) return;
             const isActive = summerModePinned || summerModeHovered;
             if (summerModeVisible === isActive) return;
@@ -2135,6 +2201,15 @@
         const setSummerHovered = isHovered => {
             summerModeHovered = isHovered;
             updateSummerMode();
+        };
+
+        const closeSummerMode = (returnFocus = false, suppressHover = false) => {
+            summerModeHovered = false;
+            suppressSummerHoverUntilLeave = suppressHover;
+            setSummerPinned(false);
+            if (returnFocus && profileIcon) {
+                profileIcon.focus({ preventScroll: true });
+            }
         };
 
         const setMenuOpen = (isOpen) => {
@@ -2166,10 +2241,7 @@
                 }
 
                 if (summerModePinned) {
-                    summerModeHovered = false;
-                    suppressSummerHoverUntilLeave = true;
-                    setSummerPinned(false);
-                    profileIcon.focus();
+                    closeSummerMode(true, true);
                 }
             });
 
@@ -2229,22 +2301,25 @@
             });
         }
 
+        if (summerModeCloseEl) {
+            summerModeCloseEl.addEventListener('click', () => closeSummerMode(true));
+        }
+
         document.addEventListener('pointerdown', event => {
             if (
                 summerModePinned
                 && profileArea
                 && !profileArea.contains(event.target)
+                && !summerModeCloseEl?.contains(event.target)
             ) {
-                summerModeHovered = false;
-                suppressSummerHoverUntilLeave = true;
-                setSummerPinned(false);
+                closeSummerMode();
             }
         }, { passive: true });
 
         window.addEventListener('resize', () => {
             resizeLensFlareCanvas();
             resizeMemoryTraceCanvas();
-            if (lensFlareActive && reducedMotionMedia.matches) {
+            if (lensFlareActive && !shouldAnimateLensFlare()) {
                 drawLensFlare(1600);
             }
         });
@@ -2314,16 +2389,6 @@
             lazyBgTargets.forEach(el => setTimeout(() => lazyLoadBackground(el), 300));
         }
 
-        // プロフィールアイコンは初期表示優先のため、アイドル時間にゆるく読み込み
-        if (profileIcon && profileIcon.dataset.bg) {
-            const loadProfileIcon = () => lazyLoadBackground(profileIcon);
-            if ('requestIdleCallback' in window) {
-                requestIdleCallback(loadProfileIcon, { timeout: 800 });
-            } else {
-                setTimeout(loadProfileIcon, 500);
-            }
-        }
-
         // グローバル背景は初回ホバー時のみ読み込み
         let globalBgLoaded = false;
         const ensureGlobalBg = () => {
@@ -2335,21 +2400,9 @@
         profileIcon.addEventListener('focus', ensureGlobalBg);
         profileArea.addEventListener('mouseenter', ensureGlobalBg);
 
-        // ナビゲーションのスクロールをゆっくり＆ヘッダー分オフセット
+        // 標準のアンカー移動・URLハッシュ・履歴を保ち、メニューだけ閉じる
         document.querySelectorAll('nav a[href^="#"]').forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                setMenuOpen(false);
-                const targetId = link.getAttribute('href').slice(1);
-                const targetEl = document.getElementById(targetId);
-                if (!targetEl) return;
-                const headerHeight = headerEl ? headerEl.offsetHeight : 0;
-                const targetY = targetEl.getBoundingClientRect().top + window.pageYOffset - headerHeight - 10;
-                window.scrollTo({
-                    top: targetY,
-                    behavior: 'smooth'
-                });
-            });
+            link.addEventListener('click', () => setMenuOpen(false));
         });
     </script>
 </body>
