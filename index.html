@@ -29,17 +29,17 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <!-- Favicon -->
-    <link rel="icon" type="image/png" sizes="512x512" href="Logo_nm79.png">
-    <link rel="apple-touch-icon" sizes="512x512" href="Logo_nm79.png">
+    <link rel="icon" type="image/png" sizes="800x800" href="Logo_nm79.png">
+    <link rel="apple-touch-icon" sizes="800x800" href="Logo_nm79.png">
     
     <style>
         :root {
-            --bg-color: #0b1220;
+            --bg-color: #080e18;
             --text-color: #dbe5f2;
             --accent-color: #86afea;
             --accent-dark: #4f7fbd;
-            --card-bg: rgba(22, 35, 58, 0.72);
-            --shadow: 0 18px 48px rgba(0, 0, 0, 0.32);
+            --muted-color: #a5b4c5;
+            --line-color: rgba(186, 216, 255, 0.17);
         }
 
         *, *::before, *::after { box-sizing: border-box; }
@@ -62,7 +62,7 @@
             color: var(--text-color);
             line-height: 1.8;
             color-scheme: dark;
-            background-image: linear-gradient(135deg, #0a101c 0%, #111b2d 54%, #0b1424 100%);
+            background-image: linear-gradient(145deg, #080e18, #0a1420 60%, #080f19);
         }
 
         main, footer { position: relative; z-index: 1; }
@@ -86,9 +86,9 @@
             height: 88vh;
             border-radius: 50%;
             background: radial-gradient(ellipse at 24% 18%,
-                rgba(225, 240, 255, 0.74) 0%,
-                rgba(166, 204, 255, 0.34) 21%,
-                rgba(108, 157, 238, 0.13) 46%,
+                rgba(225, 240, 255, 0.46) 0%,
+                rgba(166, 204, 255, 0.2) 21%,
+                rgba(108, 157, 238, 0.05) 46%,
                 transparent 72%);
             filter: blur(22px);
             opacity: 0.82;
@@ -166,7 +166,7 @@
             width: 100%;
             height: 100%;
             pointer-events: none;
-            z-index: 880;
+            z-index: 0;
             opacity: 0.86;
             mix-blend-mode: screen;
             filter: saturate(0.9);
@@ -186,7 +186,7 @@
             inset: 0;
             overflow: hidden;
             pointer-events: none;
-            z-index: 890;
+            z-index: 0;
             contain: strict;
         }
 
@@ -243,7 +243,7 @@
             aspect-ratio: 1;
             border-radius: 50%;
             pointer-events: none;
-            z-index: 900;
+            z-index: 0;
             opacity: 0;
             mix-blend-mode: screen;
             background: radial-gradient(circle,
@@ -268,7 +268,7 @@
             filter: blur(9px);
         }
 
-        .cursor-light-visible .cursor-light { opacity: 0.76; }
+        .cursor-light-visible .cursor-light { opacity: 0.48; }
 
         .global-bg-active .cursor-light {
             background: radial-gradient(circle,
@@ -307,26 +307,11 @@
             }
         }
 
-        /* 夏の空へ切り替わるホバー時は、左上から暖かい太陽光を強める */
-        .global-bg-active .ambient-light::before {
-            background: radial-gradient(ellipse at 18% 8%,
-                rgba(255, 252, 224, 0.98) 0%,
-                rgba(255, 235, 184, 0.72) 10%,
-                rgba(255, 207, 132, 0.32) 27%,
-                transparent 66%);
-            filter: blur(12px) saturate(0.9);
-            opacity: 0.96;
-            animation: summer-sun-breathe 5s ease-in-out infinite alternate;
-        }
-
+        /* Summer uses one canvas light source for both glare and reflections. */
+        .global-bg-active .ambient-light::before,
         .global-bg-active .ambient-light::after {
-            background:
-                radial-gradient(ellipse at 12% 0%, rgba(255, 250, 211, 0.34) 0%, transparent 30%),
-                linear-gradient(116deg, rgba(255, 241, 195, 0.22) 0%, transparent 48%),
-                linear-gradient(128deg, rgba(255, 228, 170, 0.12) 0%, transparent 58%);
-            filter: blur(26px) saturate(0.85);
-            opacity: 0.48;
-            animation: summer-rays 8s ease-in-out infinite alternate;
+            opacity: 0;
+            animation: none;
         }
 
         .global-bg-active .ambient-sparkles {
@@ -343,12 +328,8 @@
         }
 
         @keyframes moon-breathe {
-            0%, 16%, 100% { opacity: 0.035; transform: scale(0.96) translate3d(-0.4vw, -0.2vh, 0); }
-            31% { opacity: 0.18; transform: scale(0.99) translate3d(0, 0, 0); }
-            46% { opacity: 0.88; transform: scale(1.04) translate3d(1.2vw, 0.8vh, 0); }
-            54% { opacity: 0.98; transform: scale(1.07) translate3d(1.8vw, 1.2vh, 0); }
-            68% { opacity: 0.12; transform: scale(0.98) translate3d(0.2vw, 0.2vh, 0); }
-            82% { opacity: 0.025; transform: scale(0.95) translate3d(-0.5vw, -0.2vh, 0); }
+            0%, 100% { opacity: 0.52; transform: scale(0.98); }
+            48% { opacity: 0.94; transform: scale(1.06) translate3d(1vw, 0.6vh, 0); }
         }
 
         @keyframes moon-rays {
@@ -363,16 +344,6 @@
             0%, 100% { opacity: 0.06; transform: scale(0.55); }
             42% { opacity: 0.72; transform: scale(1.25); }
             58% { opacity: 0.18; transform: scale(0.82); }
-        }
-
-        @keyframes summer-sun-breathe {
-            0% { opacity: 0.78; transform: scale(0.98) translate3d(0, 0, 0); }
-            100% { opacity: 1; transform: scale(1.08) translate3d(1.4vw, 0.8vh, 0); }
-        }
-
-        @keyframes summer-rays {
-            0% { opacity: 0.38; transform: skewX(-9deg) translate3d(-1vw, 0, 0) rotate(-1deg); }
-            100% { opacity: 0.82; transform: skewX(-9deg) translate3d(3vw, 1.5vh, 0) rotate(1.5deg); }
         }
 
         a { text-decoration: none; color: var(--text-color); transition: 0.3s; }
@@ -416,689 +387,243 @@
             border: 0;
         }
 
-        /* Header */
+        /* An open night sky: the portrait looks towards the light, above the name. */
         header {
-            padding: 20px 0;
-            background: rgba(7, 13, 25, 0.86);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
             position: fixed;
-            width: 100%;
-            box-sizing: border-box;
+            inset: 0 0 auto;
             z-index: 1000;
-            border-bottom: 1px solid rgba(181, 211, 255, 0.14);
-            transition: background 0.45s ease, border-color 0.45s ease, box-shadow 0.45s ease;
+            padding: 18px 0;
+            background: linear-gradient(#080e18e8, #080e1800);
+            transition: background 0.35s ease;
         }
-
+        .has-scrolled header { background: rgba(8, 14, 24, 0.97); }
         .header-inner {
-            max-width: 1200px;
+            max-width: 1360px;
+            padding: 0 56px;
             margin: 0 auto;
-            padding: 0 32px;
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            box-sizing: border-box;
+            gap: 28px;
             position: relative;
         }
-        
-        .logo { font-weight: 800; font-size: 1.5rem; letter-spacing: 1px; color: #e6edf8; }
-        
-        header nav { transition: opacity 0.35s ease; }
-        nav ul { list-style: none; display: flex; gap: 28px; padding: 0; margin: 0; }
-        nav ul li a { font-weight: 700; font-size: 0.9rem; color: #a7b5ca; }
-        nav ul li a:hover { color: var(--accent-color); }
+        .logo { margin-right: auto; font-family: Georgia, 'Times New Roman', serif; font-size: 1.65rem; letter-spacing: -0.055em; }
+        nav ul { display: flex; gap: 28px; margin: 0; padding: 0; list-style: none; }
+        nav a { display: block; padding: 10px 0; color: var(--muted-color); font-size: 0.72rem; letter-spacing: 0.04em; }
+        nav a:hover, nav a[aria-current="location"] { color: #f1f4f7; }
+        nav a[aria-current="location"] { text-decoration: underline; text-decoration-color: #a6bcd1; text-underline-offset: 8px; }
+        .header-actions { display: none; }
+        .menu-toggle { display: grid; place-items: center; width: 44px; height: 44px; padding: 10px; border: 0; background: none; color: var(--text-color); cursor: pointer; }
+        .menu-mark, .menu-mark::before, .menu-mark::after { display: block; width: 24px; height: 1px; background: currentColor; position: relative; }
+        .menu-mark::before, .menu-mark::after { content: ''; position: absolute; left: 0; }
+        .menu-mark { background: transparent; }
+        .menu-mark::before { top: -4px; }
+        .menu-mark::after { top: 4px; }
+        .menu-toggle[aria-expanded="true"] .menu-mark::before { top: 0; transform: rotate(45deg); }
+        .menu-toggle[aria-expanded="true"] .menu-mark::after { top: 0; transform: rotate(-45deg); }
 
-        .menu-toggle {
-            display: none;
-            width: 44px;
-            height: 44px;
-            border: 0;
-            border-radius: 12px;
-            background: rgba(139, 185, 255, 0.14);
-            color: #dce8f7;
-            font: inherit;
-            font-size: 1.1rem;
-            cursor: pointer;
-            transition: opacity 0.3s ease, background 0.3s ease;
-        }
-
-        /* Main */
-        main { padding-top: 120px; padding-bottom: 80px; }
-        .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
-
-        section {
-            margin-bottom: 112px;
-            scroll-margin-top: 110px; /* 固定ヘッダー分の余白を確保 */
-        }
-        h2 {
-            font-size: 2.5rem;
-            margin-bottom: 44px;
-            position: relative;
-            display: inline-block;
-            color: #e4ecf7;
-            letter-spacing: -0.035em;
-        }
-        h2::before {
+        main { padding: 86px 0 24px; }
+        .container { max-width: 1280px; margin: 0 auto; padding: 0 56px; }
+        .content-sections { position: relative; display: flow-root; isolation: isolate; transition: opacity 0.35s ease; }
+        .content-sections::before {
             content: '';
             position: absolute;
-            left: 0; top: -10px;
-            width: 30px; height: 4px;
-            background: var(--accent-color);
-            border-radius: 2px;
+            inset: -128px 0 -150px;
+            z-index: -1;
+            pointer-events: none;
+            background: linear-gradient(transparent, rgba(8, 14, 24, 0.97) 128px, rgba(8, 14, 24, 0.97) calc(100% - 20px), transparent);
+            opacity: 0;
+            /* Keep the reading area dark until the summer sky has faded out. */
+            transition: opacity 0.35s ease 0.85s;
         }
+        .global-bg-active .content-sections::before { opacity: 1; transition: opacity 0.2s ease; }
+        .summer-pinned .content-sections { opacity: 0; pointer-events: none; }
+        section { margin-bottom: 136px; scroll-margin-top: 112px; }
+        section:focus { outline: none; }
+        .section-heading { margin-bottom: 48px; }
+        h2 { margin: 0; font-family: Georgia, 'Times New Roman', serif; font-size: clamp(2.4rem, 5vw, 4rem); font-weight: 400; letter-spacing: -0.045em; line-height: 1.15; }
+        .section-heading p { margin: 14px 0 0; font-size: 0.72rem; letter-spacing: 0.08em; color: var(--muted-color); }
 
-        /* Profile */
+        #profile { margin-bottom: 96px; }
         .profile-area {
-            display: flex;
-            align-items: center;
-            gap: 60px;
-            background: linear-gradient(135deg, rgba(23, 38, 63, 0.82), rgba(14, 26, 46, 0.76));
-            padding: 60px;
-            border: 1px solid rgba(186, 216, 255, 0.12);
-            border-radius: 24px;
-            box-shadow: var(--shadow);
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 240px;
+            grid-template-rows: 1fr auto auto;
+            min-height: min(730px, calc(100svh - 86px));
+            gap: 0 40px;
+            padding: 132px 0 28px;
             position: relative;
-            overflow: hidden;
-            transition: transform 0.3s ease;
-            z-index: 1;
             isolation: isolate;
         }
-
-        .profile-area::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            z-index: 1;
-            pointer-events: none;
-            background:
-                linear-gradient(128deg, rgba(255, 250, 220, 0.20) 0%, rgba(255, 220, 163, 0.08) 24%, transparent 54%),
-                radial-gradient(circle at 5% 0%, rgba(255, 252, 226, 0.14), transparent 36%);
-            opacity: 0;
-            transition: opacity 0.55s ease;
-        }
-
-        .profile-area.bg-active::after { opacity: 1; }
-
-        /* プロフィール背景演出 */
-        .profile-bg-reveal {
-            position: absolute;
-            top: -2px;
-            left: -2px;
-            width: calc(100% + 4px);  /* 左右2px分はみ出させ、枠でトリミング */
-            height: calc(100% + 4px); /* 上下も均等に伸ばして比率を保つ */
-            background-color: #152b45;
-            background-size: cover; /* PC：デフォルトに戻す */
-            background-position: center;
-            background-repeat: no-repeat;
-            opacity: 0;
-            transition: opacity 0.5s ease;
-            z-index: -1;
-        }
-
-        /* プロフィールにカーソルが乗ったときにうっすら表示 */
-        .profile-area.bg-hover .profile-bg-reveal {
-            opacity: 0.35;
-        }
-        
-        /* ホバー時に鮮明に浮き上がる */
-        .profile-area.bg-active .profile-bg-reveal {
-            opacity: 0.8;
-        }
-        
-        /* テキスト色調整（背景が出た時用） */
-        .profile-area.bg-active .profile-text h1,
-        .profile-area.bg-active .profile-text p {
-            color: #fff;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
-        }
-        .profile-area.bg-active .profile-sub {
-            color: #7fd8ff;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
-        }
-
-        .profile-text {
-            position: relative;
-            z-index: 2;
-            flex: 1;
-            transition: color 0.3s;
-        }
-
+        .profile-text { grid-column: 1; grid-row: 2; position: relative; z-index: 2; }
+        .profile-sub { display: block; color: #b8c8d8; font-size: 0.7rem; letter-spacing: 0.32em; margin: 0 0 22px 6px; text-transform: uppercase; }
+        .profile-text h1 { margin: 0 0 0 -8px; color: #e6edf5; font-family: Georgia, 'Times New Roman', serif; font-size: clamp(6rem, 13.3vw, 11.5rem); font-weight: 400; line-height: 0.9; letter-spacing: -0.065em; }
+        .profile-text p { margin: 34px 0 0 6px; font-size: 0.87rem; letter-spacing: 0.13em; }
+        .profile-portrait { grid-column: 2; grid-row: 1 / 3; align-self: start; justify-self: start; position: relative; z-index: 2; margin-top: 28px; }
         .profile-icon {
-            width: 200px; height: 200px;
-            border-radius: 30px;
-            background-color: #1c2d4b;
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            transform: rotate(-3deg);
-            border: 4px solid rgba(218, 232, 248, 0.72);
-            box-shadow: 0 18px 42px rgba(0, 0, 0, 0.34), 0 0 0 1px rgba(158, 199, 255, 0.12);
-            transition: transform 0.4s ease, box-shadow 0.4s ease;
-            cursor: pointer;
-            z-index: 2;
-            flex-shrink: 0;
             display: block;
+            width: 190px;
+            height: 190px;
             padding: 0;
+            border: 1px solid rgba(218, 232, 248, 0.42);
+            border-radius: 50%;
+            overflow: hidden;
+            background: #1c2d4b;
+            transform: rotate(-8deg);
+            box-shadow: -12px -14px 46px -28px rgba(182, 213, 255, 0.6);
+            transition: transform 0.6s ease, box-shadow 0.6s ease;
+            cursor: pointer;
             appearance: none;
             -webkit-appearance: none;
-            overflow: hidden;
         }
-        
-        .profile-icon:hover {
-            transform: rotate(0deg) scale(1.05);
-            box-shadow: 0 25px 56px rgba(58, 111, 189, 0.34), 0 0 0 1px rgba(220, 238, 255, 0.24);
-        }
+        .profile-icon:disabled { cursor: default; }
+        .profile-icon:hover, .profile-icon:focus-visible { transform: rotate(-3deg); box-shadow: -12px -14px 56px -18px rgba(255, 239, 187, 0.7); }
+        .profile-icon-image { display: block; width: 100%; height: 100%; object-fit: cover; pointer-events: none; user-select: none; }
+        .social-links { grid-column: 1 / -1; grid-row: 3; display: flex; flex-wrap: wrap; gap: 4px 28px; margin-top: 54px; padding-top: 20px; border-top: 1px solid var(--line-color); transition: opacity 0.3s ease; }
+        .social-icon { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: var(--muted-color); font-size: 0.72rem; }
+        .social-icon:hover { color: #f3f6fb; text-decoration: underline; text-underline-offset: 5px; }
+        .social-icon i { font-size: 0.95rem; width: 17px; text-align: center; }
+        .social-icon img { display: block; width: 17px; height: 17px; object-fit: contain; filter: brightness(0) invert(1); opacity: 0.8; }
+        .social-icon.nico-icon img { padding: 3px; }
 
-        .profile-icon-image {
-            display: block;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            object-position: center;
-            pointer-events: none;
-            user-select: none;
-        }
-
-        .profile-text h1 { font-size: 2.5rem; line-height: 1.2; margin: 0 0 10px; color: #e9eff8; }
-        .profile-sub { color: var(--accent-color); font-weight: 700; margin-bottom: 20px; display: block; }
-
-        /* Social Icons in Profile */
-        .social-links {
-            margin-top: 25px;
-            display: flex;
-            justify-content: flex-start; /* 左寄せ */
-            gap: 15px;
-            flex-wrap: wrap; /* 画面が狭い場合に折り返し */
-            transition: opacity 0.3s ease;
-        }
-
-        /* プロフィールアイコンにホバー中はSNSアイコンを非表示 */
-        .profile-area.bg-active .social-links {
-            opacity: 0;
-            pointer-events: none;
-        }
-        
-        .social-icon {
-            width: 45px; height: 45px;
-            background: rgba(226, 239, 255, 0.10);
-            border-radius: 50%;
-            display: grid;
-            place-items: center;     /* 水平・垂直とも中央寄せ */
-            color: #dce7f5;
-            font-size: 1.2rem;
-            line-height: 1;          /* 行の高さを1に固定してズレを防止 */
-            transition: 0.3s;
-            text-decoration: none;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            position: relative;
-            overflow: hidden;
-            flex-shrink: 0;
-        }
-
-        /* アイコン自体の位置微調整 */
-        .social-icon i {
-            display: block;          /* グリッド中央に載せるだけ */
-            line-height: 1;
-            transform: translateY(1px); /* わずかに下げて中央見えに調整 */
-        }
-
-        /* 汎用ホバー */
-        .social-icon:hover {
-            background: var(--accent-color);
-            color: #fff;
-            transform: translateY(-3px);
-        }
-        
-        /* X (Twitter) Style */
-        .social-icon.x-twitter {
-            background: rgba(226, 239, 255, 0.10);
-            color: #dce7f5;
-        }
-        .social-icon.x-twitter:hover {
-            background-color: var(--accent-color);
-            color: #ffffff;
-            transform: translateY(-3px);
-        }
-
-        /* Custom Image Icon Style (Niconico/Apple) */
-        .social-icon.custom-img-icon {
-            padding: 8px; /* 画像の余白調整を少し減らして全体サイズを揃える */
-            box-sizing: border-box;
-        }
-        
-        .social-icon.custom-img-icon img {
-            width: 80%;
-            height: 80%;
-            object-fit: contain;
-            /* 画像を強制的に黒にするフィルター */
-            filter: brightness(0) saturate(100%) invert(1);
-            transition: 0.3s;
-            display: block;
-        }
-
-        /* Niconicoのみ少し小さくする */
-        .social-icon.nico-icon img {
-            width: 60%;
-            height: 60%;
-        }
-
-        /* ホバー時にカスタムアイコンを白にする */
-        .social-icon.custom-img-icon:hover img {
-            filter: brightness(0) saturate(100%) invert(1);
-        }
-
-        /* Global background reveal on profile hover */
-        .global-bg {
-            position: fixed;
-            inset: 0;
-            background-color: #0b1224;
-            background-size: cover;
-            background-position: center;
-            opacity: 0;
-            transition: opacity 0.6s ease;
-            pointer-events: none;
-            z-index: -1;
-        }
-        .global-bg::after {
-            content: "";
-            position: absolute;
-            inset: 0;
-            background: rgba(0,0,0,0.25);
-        }
-        .global-bg-active .global-bg {
-            opacity: 0.75;
-            filter: saturate(1.25) brightness(1.05);
-        }
-
-        /* Hide other sections while profile icon hover */
-        #news,
-        #works,
-        #achievement,
-        #contact {
-            transition: opacity 0.35s ease;
-        }
-
-        .global-bg-active #news,
-        .global-bg-active #works,
-        .global-bg-active #achievement,
-        .global-bg-active #contact {
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        /* Hide header bar except logo when bg is active */
-        .global-bg-active header {
-            background: transparent;
-            border-bottom: none;
-            box-shadow: none;
-            backdrop-filter: none;
-            -webkit-backdrop-filter: none;
-        }
-        .global-bg-active header nav {
-            opacity: 0;
-            pointer-events: none;
-        }
-        .global-bg-active .menu-toggle {
-            opacity: 0;
-            pointer-events: none;
-        }
-        .global-bg-active .logo {
-            color: #fff;
-            text-shadow: 0 4px 16px rgba(0,0,0,0.4);
-        }
-
-        .summer-mode-close {
-            position: fixed;
-            top: 18px;
-            right: 24px;
-            z-index: 1200;
-            min-height: 44px;
-            padding: 10px 16px;
-            border: 1px solid rgba(247, 251, 255, 0.76);
-            border-radius: 999px;
-            background: rgba(11, 26, 51, 0.76);
-            color: #f7fbff;
-            font: inherit;
-            font-size: 0.86rem;
-            font-weight: 800;
-            letter-spacing: 0.02em;
-            cursor: pointer;
-            box-shadow: 0 10px 32px rgba(0, 0, 0, 0.28);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-        }
-
+        /* The same sky fills the view on hover or deliberate keyboard/touch activation. */
+        .global-bg { position: fixed; inset: 0; background-color: #080e18; background-size: cover; background-position: center; opacity: 0; transition: opacity 0.85s ease; pointer-events: none; z-index: 0; }
+        .global-bg::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(4, 20, 40, 0.14), rgba(4, 20, 40, 0.36)); }
+        .global-bg-active .global-bg { opacity: 0.92; }
+        .global-bg-active .profile-text { text-shadow: 0 2px 24px rgba(3, 21, 40, 0.4); }
+        .global-bg-active .profile-text h1, .global-bg-active .profile-text p { color: #fff; }
+        .global-bg-active .profile-sub { color: #eff6fd; }
+        .global-bg-active header { background: linear-gradient(rgba(7, 23, 42, 0.45), transparent); }
+        .global-bg-active nav a, .global-bg-active .social-icon { color: #eef4fa; text-shadow: 0 1px 8px #12304b; }
+        #news, #works, #achievement, #contact { transition: opacity 0.35s ease; }
+        .summer-pinned #news, .summer-pinned #works, .summer-pinned #achievement, .summer-pinned #contact,
+        .summer-pinned header nav, .summer-pinned .header-actions, .summer-pinned .social-links, .summer-pinned .site-footer { opacity: 0; pointer-events: none; }
+        .summer-pinned header { background: transparent; }
+        .summer-mode-close { position: fixed; top: 22px; right: max(32px, calc((100vw - 1248px) / 2)); z-index: 1100; min-height: 44px; padding: 8px 0; border: 0; border-bottom: 1px solid rgba(255,255,255,0.55); background: none; color: #fff; font: inherit; font-size: 0.76rem; text-shadow: 0 1px 8px #12304b; cursor: pointer; }
         .summer-mode-close[hidden] { display: none; }
+        .summer-mode-close:hover { border-color: #fff; }
 
-        .summer-mode-close:hover {
-            background: rgba(20, 45, 82, 0.92);
-            color: #fff;
-        }
+        /* An offset pair of sleeves gives each release its own space. */
+        .news-grid { display: grid; grid-template-columns: 1.18fr 0.82fr; gap: 8%; align-items: start; }
+        .news-feature { display: block; min-width: 0; }
+        .news-feature:nth-child(2) { margin-top: 152px; }
+        .news-art { display: block; width: 100%; height: auto; background: #18253b; transition: transform 0.45s ease, filter 0.45s ease; }
+        .news-feature:hover .news-art { transform: translateY(-5px); filter: brightness(1.06); }
+        .news-content { position: relative; padding: 24px 0 0; }
+        .news-meta { display: block; color: var(--muted-color); font-size: 0.72rem; letter-spacing: 0.07em; }
+        .news-title { margin: 10px 0 14px; font-family: Georgia, 'Times New Roman', serif; font-size: clamp(2.5rem, 4vw, 3.5rem); font-weight: 400; line-height: 1; letter-spacing: -0.045em; color: #edf3fb; }
+        .news-desc { margin: 0; color: var(--muted-color); font-size: 0.875rem; line-height: 1.9; }
+        .news-action { display: inline-block; margin-top: 18px; padding: 4px 0; color: #c4d5e8; font-size: 0.72rem; }
+        .news-feature:hover .news-action { text-decoration: underline; text-underline-offset: 5px; }
+        .external-arrow { display: inline-block; margin-left: 10px; }
 
-        /* News */
-        .news-feature {
-            position: relative;
-            border-radius: 22px;
-            overflow: hidden;
-            box-shadow: 0 16px 44px rgba(0,0,0,0.32);
-            background-color: #18253b;
-            background-size: cover;
-            background-position: center;
-            min-height: 360px;
-            margin-bottom: 40px;
-            display: flex;
-            align-items: flex-end;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .news-feature:last-child { margin-bottom: 0; }
-        .news-feature::after {
-            content: "";
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.55) 100%);
-            pointer-events: none;
-            z-index: 0;
-        }
-        .news-feature::before {
-            content: "";
-            position: absolute;
-            inset: 0;
-            background: rgba(7, 14, 28, 0.18);
-            mix-blend-mode: multiply;
-            pointer-events: none;
-            z-index: 1;
-            transition: background 0.3s ease;
-        }
-        .news-feature:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 20px 56px rgba(0,0,0,0.24);
-        }
-        .news-feature:hover::before {
-            background: rgba(7, 14, 28, 0.10);
-        }
-        .news-content {
-            position: relative;
-            z-index: 2;
-            padding: 30px 32px;
-            width: 100%;
-            box-sizing: border-box;
-        }
-        .news-title {
-            display: inline-block;
-            font-size: 1.4rem;
-            font-weight: 800;
-            color: #edf3fb;
-            text-shadow: 0 3px 12px rgba(0,0,0,0.4);
-            transition: transform 0.3s ease, text-shadow 0.3s ease, filter 0.3s ease;
-            margin: 8px 0 0; /* タイトルをやや下に配置 */
-        }
-        .news-desc {
-            margin-top: 10px;
-            font-size: 1rem;
-            color: #c7d3e3;
-            line-height: 1.8;
-            text-shadow: 0 2px 8px rgba(0,0,0,0.35);
-            transition: opacity 0.3s ease, transform 0.3s ease;
-        }
-        .news-feature:hover .news-title {
-            transform: translateY(-3px);
-            text-shadow: 0 6px 18px rgba(0,0,0,0.45);
-            filter: brightness(1.1);
-        }
-        /* 説明テキストはホバーでも表示を維持 */
+        /* Credits form a quiet right-hand column beneath the artwork. */
+        #works, #achievement { display: grid; grid-template-columns: 0.38fr 0.62fr; gap: 48px; border-top: 1px solid var(--line-color); padding-top: 34px; }
+        #works .section-heading, #achievement .section-heading { margin-bottom: 0; }
+        #achievement h2 { font-size: clamp(2rem, 3.2vw, 2.8rem); }
+        .work-card { border-bottom: 1px solid var(--line-color); }
+        .work-info { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px 24px; padding: 30px 0; }
+        .work-card:first-child .work-info { padding-top: 5px; }
+        .work-meta { grid-column: 1 / -1; font-size: 0.65rem; color: #a9bfd5; letter-spacing: 0.06em; }
+        .work-title { grid-column: 1 / -1; margin: 0; font-size: 1.02rem; font-weight: 500; line-height: 1.8; }
+        .work-desc { grid-column: 1 / -1; margin: 0; font-size: 0.85rem; line-height: 1.9; color: var(--muted-color); }
+        .work-link { grid-column: 1 / -1; display: inline-flex; align-items: center; justify-self: start; min-height: 44px; margin-top: 4px; font-size: 0.7rem; color: #c4d5e8; }
+        .work-link:hover { text-decoration: underline; text-underline-offset: 5px; }
+        .achievement-card { border-bottom: 0; }
+        .achievement-card .work-title { font-size: 1.2rem; }
 
-
-        /* Works */
-        .works-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 28px;
-        }
-        .work-card {
-            background: linear-gradient(145deg, rgba(24, 39, 64, 0.80), rgba(16, 29, 50, 0.72));
-            border: 1px solid rgba(186, 216, 255, 0.12);
-            border-radius: 18px;
-            overflow: hidden;
-            box-shadow: var(--shadow);
-            transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-        }
-        .work-card:hover {
-            transform: translateY(-6px);
-            border-color: rgba(164, 203, 255, 0.24);
-            box-shadow: 0 22px 52px rgba(0, 0, 0, 0.38);
-        }
-
-        .work-info { padding: 25px; flex-grow: 1; display: flex; flex-direction: column; }
-        .work-meta { color: var(--accent-color); font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
-        .work-title { font-size: 1.2rem; font-weight: 700; margin: 5px 0 10px; display: block; }
-        .work-desc { font-size: 0.9rem; color: #afbdd0; margin-bottom: 15px; flex-grow: 1; }
-        
-        .work-link {
-            margin-top: auto;
-            font-size: 0.9rem;
-            font-weight: bold;
-            color: var(--accent-color);
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-        }
-        .work-link:hover { text-decoration: underline; }
-
-        .achievement-card {
-            position: relative;
-            min-height: 210px;
-            background:
-                radial-gradient(circle at 86% 18%, rgba(118, 167, 235, 0.18), transparent 34%),
-                linear-gradient(135deg, rgba(30, 46, 75, 0.88), rgba(14, 27, 48, 0.78));
-        }
-        .achievement-card .work-info {
-            position: relative;
-            z-index: 1;
-            justify-content: center;
-            padding: 42px;
-        }
-
-        /* Contact */
-        .contact-area {
-            text-align: center;
-            background: linear-gradient(145deg, rgba(23, 38, 62, 0.82), rgba(14, 27, 48, 0.75));
-            border: 1px solid rgba(186, 216, 255, 0.12);
-            padding: 60px 20px;
-            border-radius: 24px;
-            box-shadow: var(--shadow);
-        }
-        
-        .contact-btn {
-            background: rgba(74, 119, 184, 0.68);
-            border: 1px solid rgba(171, 204, 250, 0.35);
-            color: #eff5fc;
-            padding: 15px 50px;
-            border-radius: 50px;
-            font-weight: 700;
-            box-shadow: 0 8px 18px rgba(47, 91, 153, 0.28);
-            display: inline-block;
-            margin: 20px 0;
-            text-decoration: none;
-        }
-        .contact-btn:hover {
-            background: #5c87c4;
-            color: #fff;
-            box-shadow: 0 12px 26px rgba(47, 91, 153, 0.38);
-        }
-        
-        .contact-info-text {
-            max-width: 680px;
-            margin: 0 auto 28px;
-            color: #bac7d9;
-            line-height: 2;
-        }
-        
-        .contact-note {
-            font-size: 0.8rem;
-            color: #8291a8;
-            margin-top: 20px;
-        }
-
-        .contact-actions {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin: 14px 0 0;
-        }
-
-        .discord-contact {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            margin: 2px 0 0;
-            padding: 8px 14px;
-            border: 1px solid rgba(169, 185, 255, 0.18);
-            border-radius: 999px;
-            background: rgba(82, 95, 153, 0.14);
-            color: #dce7f5;
-            font-size: 1rem;
-            font-weight: 700;
-        }
-
+        #contact { display: grid; grid-template-columns: 0.38fr 0.62fr; gap: 48px; margin-bottom: 60px; padding-top: 40px; border-top: 1px solid var(--line-color); }
+        #contact h2 { font-size: clamp(3.5rem, 6vw, 5rem); }
+        .contact-info-text { margin: 4px 0 26px; color: var(--muted-color); font-size: 0.8rem; line-height: 2.1; max-width: 440px; }
+        .contact-btn { display: inline-block; max-width: 100%; padding: 4px 0 10px; border-bottom: 1px solid #7f9cb8; font-size: clamp(1rem, 1.6vw, 1.25rem); font-weight: 400; letter-spacing: -0.03em; overflow-wrap: anywhere; }
+        .contact-btn:hover { color: #fff; border-color: #fff; }
+        .discord-contact { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin: 20px 0 0; font-size: 0.76rem; color: var(--muted-color); }
         .discord-contact > i { color: #a9b9ff; }
+        .discord-id { color: var(--text-color); user-select: text; }
+        .copyable { min-height: 44px; padding: 8px 10px; border: 0; background: none; color: #c4d5e8; font: inherit; font-size: 0.7rem; text-decoration: underline; text-underline-offset: 5px; cursor: pointer; }
+        .copyable:hover { color: #fff; }
+        .copy-status { min-height: 1.8em; margin: 4px 0 0; color: var(--accent-color); font-size: 0.72rem; }
+        .contact-note { margin: 16px 0 0; max-width: 440px; font-size: 0.7rem; line-height: 2; color: var(--muted-color); }
+        .site-footer { max-width: 1280px; margin: 0 auto; padding: 24px 56px 32px; color: var(--muted-color); font-size: 0.65rem; }
+        .footer-inner { display: flex; justify-content: space-between; align-items: center; gap: 20px; padding-top: 20px; border-top: 1px solid var(--line-color); }
+        .footer-top { display: inline-flex; align-items: center; min-height: 44px; }
 
-        .site-footer {
-            padding: 36px 20px 44px;
-            color: #8190a8;
-            font-size: 0.8rem;
-            text-align: center;
+        @media (max-width: 1000px) {
+            .container, .header-inner, .site-footer { padding-right: 36px; padding-left: 36px; }
+            .profile-area { grid-template-columns: minmax(0, 1fr) 192px; padding-top: 112px; }
+            .profile-icon { width: 168px; height: 168px; }
+            .news-grid { gap: 6%; }
+            .news-feature:nth-child(2) { margin-top: 104px; }
+            #works, #achievement, #contact { grid-template-columns: 0.34fr 0.66fr; gap: 32px; }
         }
-
-        /* Copyable text */
-        .copyable {
-            cursor: pointer;
-            transition: color 0.2s ease;
-            appearance: none;
-            border: 0;
-            background: transparent;
-            padding: 4px 7px;
-            border-radius: 8px;
-            color: inherit;
-            font: inherit;
-            font-weight: 700;
-        }
-        .copyable:hover {
-            color: var(--accent-color);
-            background: rgba(139, 185, 255, 0.14);
-        }
-        .copyable.copied {
-            color: var(--accent-color);
-            text-decoration: underline;
-        }
-
-        /* Compact navigation */
         @media (max-width: 780px) {
-            header { padding: 14px 0; }
-            .header-inner { padding: 0 20px; }
-            .menu-toggle { display: grid; place-items: center; }
-            header nav {
-                position: absolute;
-                top: calc(100% + 15px);
-                left: 16px;
-                right: 16px;
-                padding: 10px;
-                border: 1px solid rgba(148, 163, 184, 0.22);
-                border-radius: 16px;
-                background: rgba(13, 23, 41, 0.98);
-                box-shadow: 0 18px 50px rgba(15, 23, 42, 0.14);
-                opacity: 0;
-                visibility: hidden;
-                transform: translateY(-8px);
-                transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
-            }
-            header nav.is-open {
-                opacity: 1;
-                visibility: visible;
-                transform: translateY(0);
-            }
+            header { padding: 12px 0; }
+            .header-inner { padding: 0 24px; }
+            .header-actions { display: block; }
+            header nav { position: absolute; top: calc(100% + 12px); left: 0; right: 0; padding: 12px 24px 22px; border-bottom: 1px solid var(--line-color); background: #080e18; opacity: 0; visibility: hidden; transform: translateY(-8px); transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease; }
+            header nav.is-open { opacity: 1; visibility: visible; transform: translateY(0); }
             header nav ul { flex-direction: column; gap: 0; }
-            header nav ul li a {
-                display: block;
-                padding: 11px 14px;
-                border-radius: 10px;
-            }
-            header nav ul li a:hover { background: rgba(139, 185, 255, 0.12); }
-            main { padding-top: 100px; }
-            section { scroll-margin-top: 92px; }
+            header nav a { padding: 11px 0; }
+            header nav a:hover { color: #fff; }
+            main { padding-top: 68px; }
+            section { scroll-margin-top: 96px; margin-bottom: 88px; }
+            .container, .site-footer { padding-right: 24px; padding-left: 24px; }
+            #profile { margin-bottom: 72px; }
+            .profile-area { min-height: min(690px, calc(100svh - 68px)); padding-top: 82px; grid-template-columns: minmax(0, 1fr) 150px; gap: 0 24px; }
+            .profile-icon { width: 142px; height: 142px; }
+            .profile-portrait { margin-top: 16px; }
+            .profile-text h1 { font-size: clamp(5rem, 14vw, 8rem); }
+            .profile-text p { margin-top: 28px; font-size: 0.8rem; }
+            .social-links { gap: 0 24px; margin-top: 40px; }
+            #works, #achievement, #contact { grid-template-columns: minmax(0, 1fr); gap: 34px; }
+            #contact .section-heading { margin: 0; }
+            .section-heading { margin-bottom: 32px; }
+            h2 { font-size: 3rem; }
+            #achievement h2 { font-size: 2.7rem; }
+            .summer-mode-close { top: 12px; right: 24px; }
+        }
+        @media (max-width: 540px) {
+            .profile-area { min-height: min(652px, calc(100svh - 68px)); grid-template-columns: minmax(0, 1fr) 122px; grid-template-rows: minmax(144px, 1fr) auto auto; padding-top: 68px; gap: 0 16px; }
+            .profile-portrait { grid-column: 2; grid-row: 1; margin: 0 8px 28px 0; justify-self: end; }
+            .profile-icon { width: 112px; height: 112px; }
+            .profile-text { grid-column: 1 / -1; grid-row: 2; }
+            .profile-sub { font-size: 0.6rem; margin-left: 2px; margin-bottom: 20px; }
+            .profile-text h1 { font-size: clamp(5.5rem, 23vw, 8rem); margin-left: -5px; }
+            .profile-text p { margin: 26px 0 0 2px; font-size: 0.76rem; }
+            .social-links { gap: 0 22px; margin-top: 34px; padding-top: 14px; }
+            .social-icon { font-size: 0.7rem; }
+            .social-icon i, .social-icon img { width: 15px; }
+            .news-grid { grid-template-columns: minmax(0, 1fr); gap: 54px; }
+            .news-feature:nth-child(2) { margin-top: 0; margin-left: 14%; }
+            .news-content { padding-top: 20px; }
+            .news-title { font-size: 2.5rem; }
+            .news-desc { font-size: 0.82rem; }
+            .news-action { margin-top: 12px; }
+            .work-title { font-size: 0.95rem; }
+            .site-footer { padding-top: 0; }
         }
 
-        /* Tablet landscape調整 (PCより狭い幅) */
-        @media (max-width: 1200px) {
-            .profile-bg-reveal {
-                background-size: 120%;
-                background-position: center 32%;
-            }
-        }
+        /* Respect the device's motion setting without adding an on-page control. */
+        html.effects-paused { scroll-behavior: auto; }
+        .effects-paused .ambient-light::before, .effects-paused .ambient-light::after,
+        .effects-paused .ambient-sparkles span { animation-play-state: paused !important; }
+        .effects-paused .cursor-light, .effects-paused .memory-trace-canvas, .effects-paused .click-bloom-layer { display: none; }
+        .effects-paused *, .effects-paused *::before, .effects-paused *::after { transition-duration: 0.01ms !important; }
+        .page-hidden .ambient-light::before, .page-hidden .ambient-light::after,
+        .page-hidden .ambient-sparkles span { animation-play-state: paused !important; }
 
-        /* 1024px程度の画面で少し拡大 */
-        @media (max-width: 1024px) {
-            .profile-bg-reveal {
-                background-size: 110%;
-                background-position: center 50%;
-            }
-        }
-
-        /* Mobile Responsive */
-        @media (max-width: 768px) {
-            section { margin-bottom: 96px; }
-            .profile-area { flex-direction: column; padding: 30px; text-align: center; gap: 30px; }
-            .profile-bg-reveal {
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                /* MVフレーム上下の余白と下端の歌詞を外し、狭幅でも同じ範囲を見せる */
-                background-size: auto 156%;
-                background-position: 52% 37%;
-            }
-            .social-links { justify-content: center; }
-            .news-feature {
-                min-height: 260px;
-                align-items: flex-end;
-            }
-            .news-content {
-                padding: 24px 20px;
-            }
-            .news-title { font-size: 1.2rem; }
-            .news-desc { font-size: 0.95rem; line-height: 1.7; }
-            .container { padding: 0 16px; }
-            .achievement-card .work-info { padding: 34px 26px; }
-        }
-
-        @media (max-width: 480px) {
-            section { margin-bottom: 90px; }
-            h2 { font-size: 2rem; margin-bottom: 38px; }
-            .profile-area { padding: 30px 20px; }
-            .profile-icon { width: 180px; height: 180px; }
-            .profile-text h1 { font-size: 2.15rem; }
-            .social-links {
-                display: grid;
-                grid-template-columns: repeat(3, 45px);
-                justify-content: center;
-                gap: 14px 16px;
-            }
-            .works-grid { grid-template-columns: 1fr; }
-            .contact-area { padding: 44px 16px; }
-            .contact-btn { width: 100%; padding: 14px 18px; }
-            .discord-contact {
-                width: 100%;
-                justify-content: center;
-                flex-wrap: wrap;
-            }
-            .summer-mode-close {
-                top: 12px;
-                right: 12px;
-                padding: 9px 14px;
-                font-size: 0.8rem;
-            }
+        /* Progressive enhancement: useful navigation even if scripting fails. */
+        html:not(.js-enabled) .menu-toggle,
+        html:not(.js-enabled) .copyable { display: none; }
+        html:not(.js-enabled) .ambient-light::before,
+        html:not(.js-enabled) .ambient-light::after,
+        html:not(.js-enabled) .ambient-sparkles span { animation: none; }
+        @media (max-width: 780px) {
+            html:not(.js-enabled) header { position: static; }
+            html:not(.js-enabled) .header-inner { flex-wrap: wrap; gap: 4px; }
+            html:not(.js-enabled) header nav { position: static; width: 100%; padding: 0; border: 0; background: none; opacity: 1; visibility: visible; transform: none; }
+            html:not(.js-enabled) header nav ul { flex-direction: row; flex-wrap: wrap; gap: 0 14px; }
+            html:not(.js-enabled) header nav a { padding: 8px 0; }
+            html:not(.js-enabled) main { padding-top: 24px; }
         }
 
         @media (prefers-reduced-motion: reduce) {
@@ -1108,6 +633,7 @@
             .ambient-sparkles span,
             .global-bg-active .ambient-light::before,
             .global-bg-active .ambient-light::after { animation: none !important; }
+            .cursor-light,
             .memory-trace-canvas,
             .click-bloom-layer { display: none; }
             *, *::before, *::after {
@@ -1123,6 +649,7 @@
             .click-bloom-layer { display: none; }
         }
     </style>
+
 </head>
 <body>
     <a class="skip-link" href="#main">本文へ移動</a>
@@ -1140,17 +667,19 @@
     <header>
         <div class="header-inner">
             <a class="logo" href="#profile" aria-label="Nemea ホーム">Nemea</a>
-            <button class="menu-toggle" id="menuToggle" type="button" aria-controls="primaryNavigation" aria-expanded="false">
-                <span class="sr-only" id="menuToggleLabel">メニューを開く</span>
-                <i class="fa-solid fa-bars" aria-hidden="true"></i>
-            </button>
+            <div class="header-actions">
+                <button class="menu-toggle" id="menuToggle" type="button" aria-controls="primaryNavigation" aria-expanded="false">
+                    <span class="sr-only" id="menuToggleLabel">メニューを開く</span>
+                    <span class="menu-mark" aria-hidden="true"></span>
+                </button>
+            </div>
             <nav id="primaryNavigation" aria-label="メインナビゲーション">
                 <ul>
-                    <li><a href="#profile">PROFILE</a></li>
-                    <li><a href="#news">NEWS</a></li>
-                    <li><a href="#works">WORKS</a></li>
-                    <li><a href="#achievement">ACHIEVEMENT</a></li>
-                    <li><a href="#contact">CONTACT</a></li>
+                    <li><a href="#profile">Profile</a></li>
+                    <li><a href="#news">News</a></li>
+                    <li><a href="#works">Works</a></li>
+                    <li><a href="#achievement">Achievement</a></li>
+                    <li><a href="#contact">Contact</a></li>
                 </ul>
             </nav>
         </div>
@@ -1161,74 +690,85 @@
     <main id="main" tabindex="-1">
         <div class="container">
             <!-- PROFILE -->
-            <section id="profile">
+            <section id="profile" tabindex="-1" aria-label="プロフィール">
                 <div class="profile-area" id="profileArea">
-                    <!-- 背景演出用要素 -->
-                    <div class="profile-bg-reveal lazy-bg" data-bg="Aurora_MV-0003-1600.jpg" aria-hidden="true"></div>
-                    
-                    <!-- アイコン -->
-                    <button class="profile-icon" id="profileIcon" type="button" aria-label="夏の空と太陽光の演出を表示" aria-pressed="false">
-                        <img class="profile-icon-image" src="Nemea_kun_icon-500.jpg" alt="" width="500" height="500" loading="eager" fetchpriority="high" decoding="async" draggable="false">
-                    </button>
-                    
                     <div class="profile-text">
-                        <h1>Nemea</h1>
                         <span class="profile-sub">Create Music</span>
-                        <p>
-                            夏とサウナと音楽が好き。
-                        </p>
-                        
+                        <h1>Nemea</h1>
+                        <p>夏とサウナと音楽が好き。</p>
+                    </div>
+                    <div class="profile-portrait">
+                        <button class="profile-icon" id="profileIcon" type="button" aria-label="夏の空と太陽光の演出を表示" aria-pressed="false" disabled>
+                            <img class="profile-icon-image" src="Nemea_kun_icon-500.jpg" alt="" width="500" height="500" loading="eager" fetchpriority="high" decoding="async" draggable="false">
+                        </button>
+                    </div>
                         <!-- SNS Links -->
                         <div class="social-links">
                             <!-- YouTube -->
                             <a href="https://www.youtube.com/@Nemea_x" target="_blank" rel="noopener noreferrer" class="social-icon" title="YouTube" aria-label="YouTubeでNemeaを見る">
-                                <i class="fa-brands fa-youtube" aria-hidden="true"></i>
+                                <i class="fa-brands fa-youtube" aria-hidden="true"></i><span>YouTube</span>
                             </a>
-                            <!-- Niconico (User Image Placeholder) -->
+                            <!-- Niconico -->
                             <a href="https://sp.nicovideo.jp/user/120910683/video" target="_blank" rel="noopener noreferrer" class="social-icon custom-img-icon nico-icon" title="Niconico" aria-label="ニコニコでNemeaを見る">
-                                <img src="s-512x512_webp_20ae26e6-1694-4381-804f-2ca72d54bc3c.png" alt="" decoding="async" width="45" height="45">
+                                <img src="s-512x512_webp_20ae26e6-1694-4381-804f-2ca72d54bc3c.png" alt="" decoding="async" width="45" height="45"><span>Niconico</span>
                             </a>
                             <!-- Spotify -->
                             <a href="https://open.spotify.com/intl-ja/artist/4JJdclKTjDAQjU3MOEHxIg" target="_blank" rel="noopener noreferrer" class="social-icon" title="Spotify" aria-label="SpotifyでNemeaを聴く">
-                                <i class="fa-brands fa-spotify" aria-hidden="true"></i>
+                                <i class="fa-brands fa-spotify" aria-hidden="true"></i><span>Spotify</span>
                             </a>
                             <!-- Apple Music (Custom Image) -->
                             <a href="https://music.apple.com/jp/artist/nemea/1759992210" target="_blank" rel="noopener noreferrer" class="social-icon custom-img-icon" title="Apple Music" aria-label="Apple MusicでNemeaを聴く">
-                                <img src="s-1102x1084_v-fs_webp_c2e4a516-708d-4f26-964f-8a75149115d3.png" alt="" decoding="async" width="45" height="45">
+                                <img src="s-1102x1084_v-fs_webp_c2e4a516-708d-4f26-964f-8a75149115d3.png" alt="" decoding="async" width="45" height="45"><span>Apple Music</span>
                             </a>
                             <!-- X (Twitter) -->
                             <a href="https://x.com/Nemea_x" target="_blank" rel="noopener noreferrer" class="social-icon x-twitter" title="X (Twitter)" aria-label="XでNemeaを見る">
-                                <i class="fa-brands fa-x-twitter" aria-hidden="true"></i>
+                                <i class="fa-brands fa-x-twitter" aria-hidden="true"></i><span>X</span>
                             </a>
                             <!-- Mail -->
                             <a href="mailto:nemea79@gmail.com" class="social-icon" title="Mail" aria-label="Nemeaにメールを送る">
-                                <i class="fa-solid fa-envelope" aria-hidden="true"></i>
+                                <i class="fa-solid fa-envelope" aria-hidden="true"></i><span>Mail</span>
                             </a>
                         </div>
-                    </div>
                 </div>
             </section>
 
+        </div>
+        <div class="content-sections">
+          <div class="container">
             <!-- NEWS -->
-            <section id="news">
-                <h2>NEWS</h2>
-                <a href="https://big-up.style/AVSOf3CZse" target="_blank" rel="noopener noreferrer" class="news-feature lazy-bg" data-bg="Will_jacket-1600.jpg">
-                    <div class="news-content">
-                        <h3 class="news-title">New Single「Will」</h3>
-                        <p class="news-desc">「Will feat.重音テト」リリースしました！</p>
-                    </div>
-                </a>
-                <a href="https://youtu.be/0CmoKWCAXqQ" target="_blank" rel="noopener noreferrer" class="news-feature lazy-bg" data-bg="Aurora_MV-1600.jpg">
-                    <div class="news-content">
-                        <h3 class="news-title">MV『Aurora』</h3>
-                        <p class="news-desc">新曲「Aurora」のMVを投稿しました。</p>
-                    </div>
-                </a>
+            <section id="news" tabindex="-1" aria-labelledby="newsHeading">
+                <div class="section-heading">
+                    <h2 id="newsHeading">News</h2>
+                    <p>リリース・お知らせ</p>
+                </div>
+                <div class="news-grid">
+                    <a href="https://big-up.style/AVSOf3CZse" target="_blank" rel="noopener noreferrer" class="news-feature">
+                        <img class="news-art" src="Will_jacket-1600.jpg" alt="Willのジャケット。白い背景にカセットテープ。" width="1600" height="900" decoding="async">
+                        <div class="news-content">
+                            <span class="news-meta">Single / feat. 重音テト</span>
+                            <h3 class="news-title">Will</h3>
+                            <p class="news-desc">「Will feat.重音テト」リリースしました！</p>
+                            <span class="news-action">配信サービスで聴く<span class="external-arrow" aria-hidden="true">↗</span><span class="sr-only">（新しいタブ）</span></span>
+                        </div>
+                    </a>
+                    <a href="https://youtu.be/0CmoKWCAXqQ" target="_blank" rel="noopener noreferrer" class="news-feature">
+                        <img class="news-art" src="Aurora_MV-1600.jpg" alt="青い光に包まれた少女を描いた、AuroraのMVイラスト。" width="1600" height="895" loading="lazy" decoding="async">
+                        <div class="news-content">
+                            <span class="news-meta">Music Video</span>
+                            <h3 class="news-title">Aurora</h3>
+                            <p class="news-desc">新曲「Aurora」のMVを投稿しました。</p>
+                            <span class="news-action">YouTubeで観る<span class="external-arrow" aria-hidden="true">↗</span><span class="sr-only">（新しいタブ）</span></span>
+                        </div>
+                    </a>
+                </div>
             </section>
 
             <!-- WORKS -->
-            <section id="works">
-                <h2>WORKS</h2>
+            <section id="works" tabindex="-1" aria-labelledby="worksHeading">
+                <div class="section-heading">
+                    <h2 id="worksHeading">Works</h2>
+                    <p>楽曲提供・出演</p>
+                </div>
                 <div class="works-grid">
                     <!-- Work 1 -->
                     <article class="work-card">
@@ -1236,7 +776,7 @@
                             <span class="work-meta">Providing Music / Album</span>
                             <h3 class="work-title">BLACK ROSE 1st Album "Break Day"</h3>
                             <p class="work-desc">BLACK ROSE 1stアルバムに「Break Day」楽曲提供。</p>
-                            <a href="https://shakirari.theshop.jp/items/98733310?fbclid=PAY2xjawIf6yBleHRuA2FlbQIxMQABpqxT8hsV4uhqkCT1Jl4rF2Jw12Uhu4YeMXYQEhyUS6KJHblxiTRkWhOIdw_aem_trZCgNEzppxs8cJattoyAA" target="_blank" rel="noopener noreferrer" class="work-link">View Shop <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a>
+                            <a href="https://shakirari.theshop.jp/items/98733310" target="_blank" rel="noopener noreferrer" class="work-link">ショップを見る<span class="external-arrow" aria-hidden="true">↗</span></a>
                         </div>
                     </article>
 
@@ -1246,7 +786,7 @@
                             <span class="work-meta">Event / Live</span>
                             <h3 class="work-title">アイドルプラネタリウム VOL.156</h3>
                             <p class="work-desc">BLACK ROSEさんに「ラディアンス」を歌って頂きました。</p>
-                            <a href="https://tiget.net/events/344771" target="_blank" rel="noopener noreferrer" class="work-link">Event Info <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a>
+                            <a href="https://tiget.net/events/344771" target="_blank" rel="noopener noreferrer" class="work-link">イベント詳細<span class="external-arrow" aria-hidden="true">↗</span></a>
                         </div>
                     </article>
                     
@@ -1262,8 +802,11 @@
             </section>
 
             <!-- ACHIEVEMENT -->
-            <section id="achievement">
-                <h2>ACHIEVEMENT</h2>
+            <section id="achievement" tabindex="-1" aria-labelledby="achievementHeading">
+                <div class="section-heading">
+                    <h2 id="achievementHeading">Achievement</h2>
+                    <p>受賞</p>
+                </div>
                 <div class="work-card achievement-card">
                     <div class="work-info">
                         <span class="work-meta">Award</span>
@@ -1274,24 +817,25 @@
             </section>
 
             <!-- CONTACT -->
-            <section id="contact">
-                <h2>CONTACT</h2>
+            <section id="contact" tabindex="-1" aria-labelledby="contactHeading">
+                <div class="section-heading">
+                    <h2 id="contactHeading">Contact</h2>
+                    <p>お問い合わせ</p>
+                </div>
                 <div class="contact-area">
                     <p class="contact-info-text">
-                        楽曲制作のご依頼等は、下記メールアドレス<br>
-                        またはSNSのDM、Discord等でお気軽にご連絡ください。
+                        楽曲制作のご依頼等は、メールまたはSNSのDM、Discordでお気軽にご連絡ください。
                     </p>
                     
                     <div class="contact-actions">
                         <a href="mailto:nemea79@gmail.com" class="contact-btn">nemea79@gmail.com</a>
-                        <p class="discord-contact">
+                        <div class="discord-contact">
                             <i class="fa-brands fa-discord" aria-hidden="true"></i>
-                            <span aria-hidden="true">Discord:</span>
-                            <button type="button" id="discordCopy" class="copyable" aria-label="Discord ID nm79をコピー" aria-describedby="copyStatus">
-                                nm79 <i class="fa-regular fa-copy" aria-hidden="true"></i>
-                            </button>
-                            <span id="copyStatus" class="sr-only" aria-live="polite"></span>
-                        </p>
+                            <span>Discord</span>
+                            <span class="discord-id">nm79</span>
+                            <button type="button" id="discordCopy" class="copyable" aria-label="Discord ID nm79をコピー">コピー</button>
+                        </div>
+                        <p id="copyStatus" class="copy-status" role="status" aria-live="polite" aria-atomic="true"></p>
                     </div>
                     
                     <p class="contact-note">
@@ -1299,11 +843,15 @@
                     </p>
                 </div>
             </section>
+          </div>
         </div>
     </main>
     
     <footer class="site-footer">
-        &copy; <span id="currentYear">2026</span> by Nemea.
+        <div class="footer-inner">
+            <span>&copy; <span id="currentYear">2026</span> Nemea</span>
+            <a class="footer-top" href="#profile">ページの先頭へ<span class="external-arrow" aria-hidden="true">↑</span></a>
+        </div>
     </footer>
 
     <script>
@@ -1335,8 +883,11 @@
             primaryNavigationEl,
             menuToggleEl,
             document.querySelector('.social-links'),
+            document.querySelector('.site-footer'),
             ...document.querySelectorAll('#news, #works, #achievement, #contact')
         ].filter(Boolean);
+
+        const motionReduced = () => reducedMotionMedia.matches;
 
         let lensFlareFrameId = 0;
         let lensFlareLastFrameTime = 0;
@@ -1366,6 +917,8 @@
         let summerModeVisible = false;
         let summerModePinned = false;
         let summerModeHovered = false;
+        let summerPinRequested = false;
+        let globalBgState = 'idle';
         let suppressSummerHoverUntilLeave = false;
 
         const MEMORY_TRACE_MAX_POINTS = 360;
@@ -1387,7 +940,7 @@
         const renderCursorLight = () => {
             if (!cursorLightEl) return;
 
-            const easing = reducedMotionMedia.matches ? 1 : 0.22;
+            const easing = motionReduced() ? 1 : 0.22;
             cursorLightX += (cursorLightTargetX - cursorLightX) * easing;
             cursorLightY += (cursorLightTargetY - cursorLightY) * easing;
             cursorLightEl.style.transform = (
@@ -1406,7 +959,7 @@
         };
 
         const showCursorLight = (x, y) => {
-            if (!cursorLightEl || !finePointerMedia.matches) return;
+            if (!cursorLightEl || !finePointerMedia.matches || motionReduced()) return;
 
             const wasVisible = bodyEl.classList.contains('cursor-light-visible');
             cursorLightTargetX = x;
@@ -1431,7 +984,7 @@
         const spawnClickBloom = event => {
             if (
                 !clickBloomLayerEl
-                || reducedMotionMedia.matches
+                || motionReduced()
                 || !finePointerMedia.matches
                 || event.pointerType === 'touch'
                 || event.detail === 0
@@ -1452,7 +1005,7 @@
         const memoryTraceEnabled = () => Boolean(
             memoryTraceContext
             && finePointerMedia.matches
-            && !reducedMotionMedia.matches
+            && !motionReduced()
             && document.visibilityState === 'visible'
         );
 
@@ -1832,306 +1385,199 @@
             lensFlareContext.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
         };
 
-        const drawSoftEllipse = (x, y, radiusX, radiusY, rotation, stops, blur = 0) => {
-            if (!lensFlareContext) return;
-
-            lensFlareContext.save();
-            lensFlareContext.globalCompositeOperation = 'screen';
-            lensFlareContext.filter = blur > 0 ? 'blur(' + blur + 'px)' : 'none';
-            lensFlareContext.translate(x, y);
-            lensFlareContext.rotate(rotation);
-            lensFlareContext.scale(radiusX, radiusY);
-
-            const gradient = lensFlareContext.createRadialGradient(-0.16, -0.14, 0.02, 0, 0, 1);
-            stops.forEach(stop => gradient.addColorStop(stop[0], stop[1]));
-            lensFlareContext.fillStyle = gradient;
-            lensFlareContext.beginPath();
-            lensFlareContext.arc(0, 0, 1, 0, Math.PI * 2);
-            lensFlareContext.fill();
-            lensFlareContext.restore();
+        // One optical axis and a fixed nine-blade iris. This is an art-directed
+        // approximation of internal reflections, not a ray-traced lens prescription.
+        const lensGhostProfiles = [
+            { at: 0.38, radius: 0.025, fill: 0.16, rim: 0.035, softness: 0.13, ringWidth: 0.12, clip: 0.08, color: [168, 216, 170], edge: [212, 233, 156] },
+            { at: 0.62, radius: 0.091, fill: 0.11, rim: 0.045, softness: 0.12, ringWidth: 0.18, clip: 0.62, color: [244, 208, 155], edge: [227, 157, 104] },
+            { at: 0.86, radius: 0.023, fill: 0.065, rim: 0.25, softness: 0.10, ringWidth: 0.085, clip: 0.08, focus: 0.48, color: [219, 238, 165], edge: [244, 182, 113] },
+            { at: 1.10, radius: 0.042, fill: 0.045, rim: 0.10, softness: 0.07, ringWidth: 0.08, clip: 0.42, color: [190, 224, 193], edge: [139, 202, 174] },
+            { at: 1.31, radius: 0.215, fill: 0.075, rim: 0.035, softness: 0.18, ringWidth: 0.22, clip: 0.46, color: [159, 137, 202], edge: [119, 185, 192] },
+            { at: 1.55, radius: 0.038, fill: 0.07, rim: 0.09, softness: 0.06, ringWidth: 0.13, clip: 0.18, color: [160, 208, 177], edge: [192, 225, 150] },
+            { at: 1.93, radius: 0.142, fill: 0.014, rim: 0.12, softness: 0.055, ringWidth: 0.065, clip: 0.64, color: [161, 182, 210], edge: [179, 148, 201] }
+        ];
+        let lensFlareTextures = null;
+        const opticalSmoothstep = (low, high, value) => {
+            const t = clamp((value - low) / (high - low), 0, 1);
+            return t * t * (3 - 2 * t);
         };
 
-        const drawApertureGhost = (x, y, size, rotation, intensity, palette, phase) => {
-            if (!lensFlareContext) return;
-
-            lensFlareContext.save();
-            lensFlareContext.globalCompositeOperation = 'screen';
-            lensFlareContext.filter = 'blur(' + Math.max(1.2, size * 0.018) + 'px)';
-            lensFlareContext.translate(x, y);
-            lensFlareContext.rotate(rotation);
-            lensFlareContext.scale(1, 0.72);
-
-            const gradient = lensFlareContext.createRadialGradient(
-                -size * 0.18,
-                -size * 0.14,
-                size * 0.03,
-                0,
-                0,
-                size
-            );
-            gradient.addColorStop(0, rgba(palette.core, 0.07 * intensity));
-            gradient.addColorStop(0.42, rgba(palette.mid, 0.12 * intensity));
-            gradient.addColorStop(0.76, rgba(palette.edge, 0.32 * intensity));
-            gradient.addColorStop(1, rgba(palette.edge, 0));
-
-            lensFlareContext.beginPath();
-            for (let i = 0; i < 6; i += 1) {
-                const angle = -Math.PI / 2 + i * (Math.PI * 2 / 6);
-                const irregularity = 1 + Math.sin(phase + i * 2.17) * 0.035;
-                const vertexX = Math.cos(angle) * size * irregularity;
-                const vertexY = Math.sin(angle) * size * irregularity;
-                if (i === 0) lensFlareContext.moveTo(vertexX, vertexY);
-                else lensFlareContext.lineTo(vertexX, vertexY);
+        const makeLensGhostTexture = profile => {
+            const size = profile.radius > 0.12 ? 384 : 256;
+            const canvas = document.createElement('canvas');
+            canvas.width = canvas.height = size;
+            const context = canvas.getContext('2d');
+            if (!context) return null;
+            const pixels = context.createImageData(size, size);
+            const sector = Math.PI * 2 / 9;
+            const irisInset = Math.cos(Math.PI / 9);
+            const channels = [0, 0, 0];
+            for (let y = 0; y < size; y += 1) {
+                for (let x = 0; x < size; x += 1) {
+                    const px = (x + 0.5 - size / 2) / (size * 0.39);
+                    const py = (y + 0.5 - size / 2) / (size * 0.39);
+                    const radius = Math.hypot(px, py);
+                    if (radius > 1 + profile.softness) continue;
+                    const angle = Math.atan2(py, px) + 0.17;
+                    const bladeAngle = ((angle % sector) + sector) % sector - sector / 2;
+                    const irisRadius = 0.82 * irisInset / Math.cos(bladeAngle) + 0.18;
+                    const pupilRadius = radius / irisRadius;
+                    const pupil = 1 - opticalSmoothstep(1 - profile.softness, 1 + profile.softness, pupilRadius);
+                    // The barrel clips off-axis reflections into a soft cat-eye.
+                    const barrel = 1 - opticalSmoothstep(1.02, 1.28, Math.hypot(px + profile.clip, py * 0.96));
+                    if (pupil === 0 || barrel === 0) continue;
+                    const body = profile.fill * Math.exp(-radius * radius * 0.62);
+                    const focus = (profile.focus || 0) * Math.exp(-radius * radius / 0.09);
+                    const transmission = (0.79 + px * 0.15) * barrel * pupil;
+                    const offset = (y * size + x) * 4;
+                    let alpha = 0;
+                    for (let channel = 0; channel < 3; channel += 1) {
+                        const chromaticRadius = pupilRadius + (channel - 1) * 0.012;
+                        const fringe = profile.rim * Math.exp(-Math.pow((chromaticRadius - 0.90) / profile.ringWidth, 2));
+                        const energy = (body * profile.color[channel] / 255
+                            + fringe * profile.edge[channel] / 255 + focus) * transmission;
+                        channels[channel] = clamp(energy, 0, 1);
+                        alpha = Math.max(alpha, channels[channel]);
+                    }
+                    if (alpha > 0) {
+                        for (let channel = 0; channel < 3; channel += 1) {
+                            pixels.data[offset + channel] = Math.round(channels[channel] * 255 / alpha);
+                        }
+                    }
+                    // Static subpixel dithering prevents bands in very faint ghosts.
+                    const noise = Math.sin(x * 12.9898 + y * 78.233) * 43758.5453;
+                    pixels.data[offset + 3] = Math.round(alpha * 255 + noise - Math.floor(noise) - 0.5);
+                }
             }
-            lensFlareContext.closePath();
-            lensFlareContext.fillStyle = gradient;
-            lensFlareContext.fill();
-            lensFlareContext.strokeStyle = rgba(palette.edge, 0.18 * intensity);
-            lensFlareContext.lineWidth = Math.max(1, size * 0.012);
-            lensFlareContext.stroke();
-            lensFlareContext.restore();
+            context.putImageData(pixels, 0, 0);
+            return canvas;
         };
 
-        const drawChromaticArc = (x, y, radiusX, radiusY, rotation, intensity, phase = 0) => {
-            if (!lensFlareContext) return;
+        const makeLensGlowTexture = stops => {
+            const canvas = document.createElement('canvas');
+            canvas.width = canvas.height = 384;
+            const context = canvas.getContext('2d');
+            if (!context) return null;
+            const glow = context.createRadialGradient(192, 192, 0, 192, 192, 192);
+            stops.forEach(([at, color]) => glow.addColorStop(at, color));
+            context.fillStyle = glow;
+            context.fillRect(0, 0, 384, 384);
+            return canvas;
+        };
 
-            const channels = [
-                { offsetX: -3, offsetY: 1, color: [255, 157, 92], alpha: 0.25 },
-                { offsetX: 0, offsetY: 0, color: [145, 237, 195], alpha: 0.20 },
-                { offsetX: 3, offsetY: -1, color: [117, 176, 255], alpha: 0.24 }
-            ];
+        const makeSunDiffractionTexture = () => {
+            const size = 384;
+            const canvas = document.createElement('canvas');
+            canvas.width = canvas.height = size;
+            const context = canvas.getContext('2d');
+            if (!context) return null;
+            const pixels = context.createImageData(size, size);
+            for (let y = 0; y < size; y += 1) {
+                for (let x = 0; x < size; x += 1) {
+                    const px = (x + 0.5 - size / 2) / (size / 2);
+                    const py = (y + 0.5 - size / 2) / (size / 2);
+                    const radius = Math.hypot(px, py);
+                    const angle = Math.atan2(py, px);
+                    const core = Math.exp(-radius * radius / 0.0024);
+                    const bloom = 0.25 * Math.exp(-radius * 8);
+                    const rays = Math.pow(Math.abs(Math.cos((angle + 0.17) * 9)), 100)
+                        * Math.exp(-radius * 4.2) * 0.24;
+                    const fade = 1 - opticalSmoothstep(0.74, 1, radius);
+                    const offset = (y * size + x) * 4;
+                    pixels.data[offset] = 255;
+                    pixels.data[offset + 1] = 248 - 24 * radius;
+                    pixels.data[offset + 2] = 226 - 49 * radius;
+                    pixels.data[offset + 3] = Math.round(clamp((core + bloom + rays) * fade, 0, 1) * 255);
+                }
+            }
+            context.putImageData(pixels, 0, 0);
+            return canvas;
+        };
 
+        const ensureLensFlareTextures = () => {
+            if (lensFlareTextures) return lensFlareTextures;
+            // Bake soft edges once. Animated frames only composite cached textures.
+            lensFlareTextures = {
+                ghosts: lensGhostProfiles.map(makeLensGhostTexture),
+                sun: makeSunDiffractionTexture(),
+                veil: makeLensGlowTexture([
+                    [0, 'rgba(255, 252, 235, 0.64)'],
+                    [0.10, 'rgba(255, 240, 212, 0.40)'],
+                    [0.30, 'rgba(248, 224, 200, 0.16)'],
+                    [0.62, 'rgba(205, 218, 237, 0.04)'],
+                    [1, 'rgba(205, 218, 237, 0)']
+                ]),
+                bloom: makeLensGlowTexture([
+                    [0, 'rgba(255, 255, 251, 1)'],
+                    [0.055, 'rgba(255, 253, 239, 0.93)'],
+                    [0.14, 'rgba(255, 239, 203, 0.48)'],
+                    [0.36, 'rgba(247, 205, 154, 0.13)'],
+                    [1, 'rgba(247, 205, 154, 0)']
+                ])
+            };
+            return lensFlareTextures;
+        };
+
+        const drawFlareTexture = (texture, x, y, radiusX, radiusY, angle, opacity) => {
+            if (!texture || !lensFlareContext) return;
             lensFlareContext.save();
-            lensFlareContext.globalCompositeOperation = 'screen';
-            lensFlareContext.filter = 'blur(' + Math.max(1.4, radiusX * 0.025) + 'px)';
-            lensFlareContext.lineCap = 'round';
-
-            channels.forEach(channel => {
-                lensFlareContext.beginPath();
-                lensFlareContext.ellipse(
-                    x + channel.offsetX,
-                    y + channel.offsetY,
-                    radiusX,
-                    radiusY,
-                    rotation,
-                    Math.PI * (0.08 + phase),
-                    Math.PI * (1.68 + phase)
-                );
-                lensFlareContext.strokeStyle = rgba(channel.color, channel.alpha * intensity);
-                lensFlareContext.lineWidth = Math.max(2, radiusX * 0.055);
-                lensFlareContext.stroke();
-            });
-
+            lensFlareContext.globalAlpha = clamp(opacity, 0, 1);
+            lensFlareContext.translate(x, y);
+            lensFlareContext.rotate(angle);
+            lensFlareContext.drawImage(texture, -radiusX, -radiusY, radiusX * 2, radiusY * 2);
             lensFlareContext.restore();
         };
 
-        const drawVeilingGlare = (sourceX, sourceY, radius, intensity, axisAngle) => {
-            if (!lensFlareContext) return;
-
-            lensFlareContext.save();
-            lensFlareContext.globalCompositeOperation = 'screen';
-            lensFlareContext.filter = 'blur(5px)';
-
-            const glow = lensFlareContext.createRadialGradient(
-                sourceX,
-                sourceY,
-                0,
-                sourceX,
-                sourceY,
-                radius
-            );
-            glow.addColorStop(0, rgba([255, 255, 239], 0.42 * intensity));
-            glow.addColorStop(0.10, rgba([255, 238, 190], 0.25 * intensity));
-            glow.addColorStop(0.34, rgba([255, 194, 126], 0.10 * intensity));
-            glow.addColorStop(0.70, rgba([159, 204, 255], 0.025 * intensity));
-            glow.addColorStop(1, rgba([159, 204, 255], 0));
-            lensFlareContext.fillStyle = glow;
-            lensFlareContext.fillRect(0, 0, lensFlareWidth, lensFlareHeight);
-
-            lensFlareContext.translate(sourceX, sourceY);
-            lensFlareContext.rotate(axisAngle);
-            const streakLength = Math.min(lensFlareWidth, lensFlareHeight) * 0.88;
-            const streak = lensFlareContext.createLinearGradient(-streakLength * 0.08, 0, streakLength, 0);
-            streak.addColorStop(0, rgba([255, 252, 229], 0.22 * intensity));
-            streak.addColorStop(0.24, rgba([255, 221, 163], 0.10 * intensity));
-            streak.addColorStop(0.72, rgba([156, 201, 255], 0.025 * intensity));
-            streak.addColorStop(1, rgba([156, 201, 255], 0));
-            lensFlareContext.fillStyle = streak;
-            lensFlareContext.fillRect(
-                -streakLength * 0.08,
-                -Math.max(4, streakLength * 0.006),
-                streakLength * 1.08,
-                Math.max(8, streakLength * 0.012)
-            );
-            lensFlareContext.restore();
-        };
-
-        const drawLensFlare = (time) => {
+        const drawLensFlare = time => {
             if (!lensFlareContext || !lensFlareCanvasEl) return;
-
             resizeLensFlareCanvas();
-            lensPointerX += (lensPointerTargetX - lensPointerX) * 0.045;
-            lensPointerY += (lensPointerTargetY - lensPointerY) * 0.045;
-
+            const textures = ensureLensFlareTextures();
             const width = lensFlareWidth;
             const height = lensFlareHeight;
             const shortestSide = Math.min(width, height);
-            const seconds = time / 1000;
-            const intensity = 0.88
-                + Math.sin(seconds * 0.37) * 0.08
-                + Math.sin(seconds * 0.13 + 1.2) * 0.04;
+            const moving = shouldAnimateLensFlare();
+            const seconds = moving ? time / 1000 : 0;
+            const elapsed = clamp(time - lensFlareLastFrameTime, 0, 64);
+            const follow = 1 - Math.exp(-elapsed / 220);
+            lensPointerX = moving ? lensPointerX + (lensPointerTargetX - lensPointerX) * follow : 0;
+            lensPointerY = moving ? lensPointerY + (lensPointerTargetY - lensPointerY) * follow : 0;
+
+            // Every reflection responds to the same small change in camera angle.
+            const sourceX = width * 0.065 + lensPointerX * shortestSide * 0.035
+                + Math.sin(seconds * 0.17) * shortestSide * 0.004;
+            const sourceY = -shortestSide * 0.010 + lensPointerY * shortestSide * 0.023
+                + Math.sin(seconds * 0.13) * shortestSide * 0.003;
+            const axisX = width * 0.5 - sourceX;
+            const axisY = height * 0.5 - sourceY;
+            const axisAngle = Math.atan2(axisY, axisX);
+            const incidence = Math.hypot(axisX, axisY) / Math.hypot(width / 2, height / 2);
+            const transmission = 1 - opticalSmoothstep(0.82, 1.5, incidence) * 0.32;
 
             lensFlareContext.clearRect(0, 0, width, height);
+            lensFlareContext.save();
+            lensFlareContext.globalCompositeOperation = 'screen';
+            drawFlareTexture(textures.veil, sourceX, sourceY,
+                Math.max(width, height) * 0.70, Math.max(width, height) * 0.70, 0, transmission);
+            drawFlareTexture(textures.bloom, sourceX, sourceY,
+                shortestSide * 0.24, shortestSide * 0.24, 0, transmission);
+            drawFlareTexture(textures.sun, sourceX, sourceY,
+                shortestSide * 0.31, shortestSide * 0.31, 0, transmission);
 
-            const sourceX = width * 0.05
-                + Math.sin(seconds * 0.19) * width * 0.008
-                + lensPointerX * width * 0.012;
-            const sourceY = -height * 0.06
-                + Math.cos(seconds * 0.16) * height * 0.008
-                + lensPointerY * height * 0.008;
-            const opticalCenterX = width * 0.52 + lensPointerX * width * 0.018;
-            const opticalCenterY = height * 0.49 + lensPointerY * height * 0.014;
-
-            const rawAxisX = opticalCenterX - sourceX;
-            const rawAxisY = opticalCenterY - sourceY;
-            const swing = Math.sin(seconds * 0.28) * 0.024
-                + Math.sin(seconds * 0.09 + 0.7) * 0.010
-                + lensPointerX * 0.012;
-            const swingCos = Math.cos(swing);
-            const swingSin = Math.sin(swing);
-            const axisX = rawAxisX * swingCos - rawAxisY * swingSin;
-            const axisY = rawAxisX * swingSin + rawAxisY * swingCos;
-            const axisLength = Math.hypot(axisX, axisY) || 1;
-            const perpendicularX = -axisY / axisLength;
-            const perpendicularY = axisX / axisLength;
-            const axisAngle = Math.atan2(axisY, axisX);
-            const arcSway = (
-                Math.sin(seconds * 0.21) * 0.018
-                + lensPointerY * 0.014
-            ) * shortestSide;
-
-            const pointOnAxis = (factor, bend = 0) => {
-                const curvedOffset = bend * shortestSide
-                    + arcSway * Math.sin(Math.PI * clamp(factor / 2, 0, 1));
-                return {
-                    x: sourceX + axisX * factor + perpendicularX * curvedOffset,
-                    y: sourceY + axisY * factor + perpendicularY * curvedOffset
-                };
-            };
-
-            drawVeilingGlare(
-                sourceX,
-                sourceY,
-                Math.max(width, height) * 0.55,
-                intensity,
-                axisAngle
-            );
-
-            const warmVeil = pointOnAxis(0.40, 0.010);
-            drawSoftEllipse(
-                warmVeil.x,
-                warmVeil.y,
-                shortestSide * 0.19,
-                shortestSide * 0.13,
-                axisAngle + 0.16,
-                [
-                    [0, rgba([255, 248, 222], 0.20 * intensity)],
-                    [0.28, rgba([255, 211, 151], 0.14 * intensity)],
-                    [0.64, rgba([255, 165, 111], 0.065 * intensity)],
-                    [1, rgba([255, 165, 111], 0)]
-                ],
-                5
-            );
-
-            const firstAperture = pointOnAxis(0.67, 0.024);
-            drawApertureGhost(
-                firstAperture.x,
-                firstAperture.y,
-                shortestSide * 0.092,
-                axisAngle + 0.24,
-                intensity,
-                { core: [255, 241, 196], mid: [255, 207, 116], edge: [255, 177, 76] },
-                seconds * 0.08
-            );
-
-            const hotGhost = pointOnAxis(0.88, 0.034);
-            drawSoftEllipse(
-                hotGhost.x,
-                hotGhost.y,
-                shortestSide * 0.030,
-                shortestSide * 0.022,
-                axisAngle - 0.08,
-                [
-                    [0, rgba([255, 255, 226], 0.72 * intensity)],
-                    [0.26, rgba([255, 224, 132], 0.46 * intensity)],
-                    [0.62, rgba([255, 146, 82], 0.18 * intensity)],
-                    [1, rgba([255, 146, 82], 0)]
-                ],
-                2.4
-            );
-
-            const innerArc = pointOnAxis(1.07, 0.043);
-            drawChromaticArc(
-                innerArc.x,
-                innerArc.y,
-                shortestSide * 0.082,
-                shortestSide * 0.058,
-                axisAngle + 0.18,
-                0.76 * intensity,
-                Math.sin(seconds * 0.11) * 0.06
-            );
-
-            const violetVeil = pointOnAxis(1.34, 0.047);
-            drawSoftEllipse(
-                violetVeil.x,
-                violetVeil.y,
-                shortestSide * 0.22,
-                shortestSide * 0.17,
-                axisAngle - 0.20,
-                [
-                    [0, rgba([244, 228, 255], 0.09 * intensity)],
-                    [0.35, rgba([193, 150, 255], 0.17 * intensity)],
-                    [0.70, rgba([120, 105, 225], 0.11 * intensity)],
-                    [0.86, rgba([104, 218, 211], 0.045 * intensity)],
-                    [1, rgba([104, 218, 211], 0)]
-                ],
-                7
-            );
-            drawChromaticArc(
-                violetVeil.x,
-                violetVeil.y,
-                shortestSide * 0.15,
-                shortestSide * 0.11,
-                axisAngle - 0.16,
-                0.36 * intensity,
-                0.18 + Math.sin(seconds * 0.09) * 0.05
-            );
-
-            const secondAperture = pointOnAxis(1.63, 0.032);
-            drawApertureGhost(
-                secondAperture.x,
-                secondAperture.y,
-                shortestSide * 0.12,
-                axisAngle - 0.17,
-                0.62 * intensity,
-                { core: [216, 239, 233], mid: [130, 226, 188], edge: [87, 178, 255] },
-                1.6 + seconds * 0.05
-            );
-
-            const rainbowArc = pointOnAxis(1.94, 0.006);
-            drawChromaticArc(
-                rainbowArc.x,
-                rainbowArc.y,
-                shortestSide * 0.12,
-                shortestSide * 0.070,
-                axisAngle + 0.06,
-                1.08 * intensity,
-                0.34 + Math.sin(seconds * 0.08) * 0.04
-            );
+            lensGhostProfiles.forEach((profile, index) => {
+                const x = sourceX + axisX * profile.at;
+                const y = sourceY + axisY * profile.at;
+                const radius = shortestSide * profile.radius;
+                const offAxis = Math.hypot(x - width / 2, y - height / 2) / shortestSide;
+                const squeeze = 1 - clamp(offAxis * 0.15, 0, 0.22);
+                drawFlareTexture(textures.ghosts[index], x, y,
+                    radius * squeeze, radius, axisAngle, transmission);
+            });
+            lensFlareContext.restore();
         };
 
         const runLensFlareFrame = (time) => {
-            if (!lensFlareActive) return;
+            lensFlareFrameId = 0;
+            if (!lensFlareActive || !shouldAnimateLensFlare()) return;
             if (time - lensFlareLastFrameTime >= 32) {
                 drawLensFlare(time);
                 lensFlareLastFrameTime = time;
@@ -2140,7 +1586,8 @@
         };
 
         const shouldAnimateLensFlare = () => (
-            finePointerMedia.matches && !reducedMotionMedia.matches
+            finePointerMedia.matches && !motionReduced()
+            && document.visibilityState === 'visible'
         );
 
         const setLensFlareActive = (isActive) => {
@@ -2150,6 +1597,7 @@
             lensFlareFrameId = 0;
 
             if (isActive) {
+                if (document.visibilityState !== 'visible') return;
                 resizeLensFlareCanvas();
                 if (shouldAnimateLensFlare()) {
                     lensFlareFrameId = requestAnimationFrame(runLensFlareFrame);
@@ -2168,33 +1616,76 @@
             }, 720);
         };
 
+        // A request may be cancelled while the image loads or decodes.
+        const ensureGlobalBg = () => {
+            if (globalBgState === 'loading' || globalBgState === 'ready') return;
+            const src = globalBgEl?.dataset.bg;
+            if (!src) return;
+            globalBgState = 'loading';
+            const img = new Image();
+            let settled = false;
+            const finish = ready => {
+                if (settled) return;
+                settled = true;
+                window.clearTimeout(timeout);
+                img.onload = null;
+                img.onerror = null;
+                globalBgState = ready ? 'ready' : 'error';
+                if (ready) {
+                    globalBgEl.style.backgroundImage = `url("${src}")`;
+                    globalBgEl.removeAttribute('data-bg');
+                } else {
+                    // Retain the source for a retry on the next user action.
+                    summerPinRequested = false;
+                    summerModeHovered = false;
+                }
+                updateSummerMode();
+            };
+            const timeout = window.setTimeout(() => finish(false), 15000);
+            img.onload = async () => {
+                try {
+                    if (typeof img.decode === 'function') await img.decode();
+                    finish(img.naturalWidth > 0);
+                } catch {
+                    finish(false);
+                }
+            };
+            img.onerror = () => finish(false);
+            img.src = src;
+        };
+
         const updateSummerMode = () => {
+            const requested = summerPinRequested || summerModeHovered;
+            if (requested) ensureGlobalBg();
+            const isActive = globalBgState === 'ready' && requested;
+            const wasPinned = summerModePinned;
+            summerModePinned = isActive && summerPinRequested;
             bodyEl.classList.toggle('summer-pinned', summerModePinned);
             document.documentElement.classList.toggle('summer-pinned', summerModePinned);
-            if (summerModeCloseEl) {
-                summerModeCloseEl.hidden = !summerModePinned;
-            }
+            if (summerModeCloseEl) summerModeCloseEl.hidden = !summerModePinned;
+            // Hover previews the light without removing navigation or content.
+            // Update inert even when a hovered preview becomes pinned.
+            summerInactiveTargets.forEach(target => { target.inert = summerModePinned; });
             if (!profileArea || !profileIcon) return;
-            const isActive = summerModePinned || summerModeHovered;
+            profileIcon.setAttribute('aria-pressed', String(summerModePinned));
+            profileIcon.setAttribute(
+                'aria-label',
+                summerModePinned
+                    ? '夏の空と太陽光の演出を閉じる'
+                    : '夏の空と太陽光の演出を表示'
+            );
+            if (summerModePinned && !wasPinned) summerModeCloseEl?.focus({ preventScroll: true });
             if (summerModeVisible === isActive) return;
 
             summerModeVisible = isActive;
             profileArea.classList.toggle('bg-active', isActive);
             bodyEl.classList.toggle('global-bg-active', isActive);
-            summerInactiveTargets.forEach(target => { target.inert = isActive; });
             setLensFlareActive(isActive);
         };
 
         const setSummerPinned = isPinned => {
             if (!profileIcon) return;
-            summerModePinned = isPinned;
-            profileIcon.setAttribute('aria-pressed', String(isPinned));
-            profileIcon.setAttribute(
-                'aria-label',
-                isPinned
-                    ? '夏の空と太陽光の演出を閉じる'
-                    : '夏の空と太陽光の演出を表示'
-            );
+            summerPinRequested = isPinned;
             updateSummerMode();
         };
 
@@ -2219,10 +1710,6 @@
             if (menuToggleLabelEl) {
                 menuToggleLabelEl.textContent = isOpen ? 'メニューを閉じる' : 'メニューを開く';
             }
-            const icon = menuToggleEl.querySelector('i');
-            if (icon) {
-                icon.className = isOpen ? 'fa-solid fa-xmark' : 'fa-solid fa-bars';
-            }
         };
 
         if (menuToggleEl && primaryNavigationEl) {
@@ -2240,8 +1727,8 @@
                     menuToggleEl.focus();
                 }
 
-                if (summerModePinned) {
-                    closeSummerMode(true, true);
+                if (summerModeVisible || summerPinRequested || summerModeHovered) {
+                    closeSummerMode(summerModePinned, true);
                 }
             });
 
@@ -2250,17 +1737,31 @@
             });
         }
 
+        document.querySelectorAll('.logo, .skip-link').forEach(link => {
+            link.addEventListener('click', () => {
+                closeSummerMode(false, true);
+                setMenuOpen(false);
+            });
+        });
+
+        // Dismiss the mobile menu without leaving invisible keyboard focus behind.
+        document.addEventListener('pointerdown', event => {
+            if (menuToggleEl?.getAttribute('aria-expanded') !== 'true') return;
+            if (primaryNavigationEl?.contains(event.target) || menuToggleEl.contains(event.target)) return;
+            const focusWasInMenu = primaryNavigationEl?.contains(document.activeElement);
+            setMenuOpen(false);
+            if (focusWasInMenu) menuToggleEl.focus({ preventScroll: true });
+        }, { passive: true });
+        document.querySelector('header')?.addEventListener('focusout', event => {
+            if (event.relatedTarget && !event.currentTarget.contains(event.relatedTarget)) setMenuOpen(false);
+        });
+
         if (currentYearEl) {
             currentYearEl.textContent = String(new Date().getFullYear());
         }
 
         if (profileArea && profileIcon) {
-            profileArea.addEventListener('mouseenter', () => {
-                profileArea.classList.add('bg-hover');
-            });
-
             profileArea.addEventListener('mouseleave', () => {
-                profileArea.classList.remove('bg-hover');
                 suppressSummerHoverUntilLeave = false;
                 setSummerHovered(false);
             });
@@ -2274,22 +1775,24 @@
                 suppressSummerHoverUntilLeave = false;
                 setSummerHovered(false);
             });
-            profileIcon.addEventListener('focus', () => {
-                profileArea.classList.add('bg-hover');
-            });
-            profileIcon.addEventListener('blur', () => {
-                if (!profileArea.matches(':hover')) {
-                    profileArea.classList.remove('bg-hover');
-                }
-            });
             profileIcon.addEventListener('click', () => {
-                const nextPinned = !summerModePinned;
+                const nextPinned = !summerPinRequested;
                 if (!nextPinned) {
                     summerModeHovered = false;
                     suppressSummerHoverUntilLeave = true;
                 }
-                setSummerPinned(nextPinned);
+                if (nextPinned) {
+                    setMenuOpen(false);
+                    setSummerPinned(true);
+                } else {
+                    closeSummerMode(true, true);
+                }
             });
+            profileIcon.addEventListener('blur', () => {
+                // Moving on during a slow load must not steal focus later.
+                if (summerPinRequested && !summerModePinned) closeSummerMode(false, true);
+            });
+            profileIcon.disabled = false;
             profileIcon.addEventListener('pointermove', event => {
                 const rect = profileIcon.getBoundingClientRect();
                 lensPointerTargetX = clamp(((event.clientX - rect.left) / rect.width - 0.5) * 2, -1, 1);
@@ -2302,12 +1805,12 @@
         }
 
         if (summerModeCloseEl) {
-            summerModeCloseEl.addEventListener('click', () => closeSummerMode(true));
+            summerModeCloseEl.addEventListener('click', () => closeSummerMode(true, true));
         }
 
         document.addEventListener('pointerdown', event => {
             if (
-                summerModePinned
+                summerPinRequested
                 && profileArea
                 && !profileArea.contains(event.target)
                 && !summerModeCloseEl?.contains(event.target)
@@ -2324,19 +1827,26 @@
             }
         });
 
+        const updateMotionPreference = () => {
+            const reduced = motionReduced();
+            bodyEl.classList.toggle('effects-paused', reduced);
+            document.documentElement.classList.toggle('effects-paused', reduced);
+
+            hideCursorLight();
+            resetMemoryTrace(true);
+            clickBloomLayerEl?.replaceChildren();
+            if (lensFlareActive) setLensFlareActive(true);
+        };
         if (typeof reducedMotionMedia.addEventListener === 'function') {
-            reducedMotionMedia.addEventListener('change', event => {
-                if (lensFlareActive) setLensFlareActive(true);
-                resetMemoryTrace(true);
-                if (!event.matches) {
-                    resizeMemoryTraceCanvas();
-                    scheduleMemoryEcho();
-                }
-            });
+            reducedMotionMedia.addEventListener('change', updateMotionPreference);
         }
+        updateMotionPreference();
 
         document.addEventListener('visibilitychange', () => {
-            if (document.visibilityState === 'hidden') {
+            const hidden = document.visibilityState !== 'visible';
+            bodyEl.classList.toggle('page-hidden', hidden);
+            if (lensFlareActive) setLensFlareActive(true);
+            if (hidden) {
                 hideCursorLight();
                 resetMemoryTrace(true);
                 return;
@@ -2345,65 +1855,64 @@
             scheduleMemoryEcho();
         });
 
-        // Discord ID copy
+        // Show copy feedback to everyone; keep the ID readable if copying is denied.
+        let copyFeedbackTimer = 0;
         if (discordCopyEl) {
             discordCopyEl.addEventListener('click', async () => {
+                window.clearTimeout(copyFeedbackTimer);
+                discordCopyEl.disabled = true;
+                if (copyStatusEl) copyStatusEl.textContent = '';
                 try {
                     await navigator.clipboard.writeText('nm79');
-                    discordCopyEl.classList.add('copied');
-                    if (copyStatusEl) copyStatusEl.textContent = 'Discord IDをコピーしました';
-                    setTimeout(() => discordCopyEl.classList.remove('copied'), 1200);
-                } catch (e) {
-                    console.error('Clipboard copy failed', e);
-                    if (copyStatusEl) copyStatusEl.textContent = 'コピーできませんでした';
+                    discordCopyEl.textContent = 'コピー済み';
+                    if (copyStatusEl) copyStatusEl.textContent = 'Discord IDをコピーしました。';
+                } catch {
+                    discordCopyEl.textContent = 'コピー';
+                    if (copyStatusEl) copyStatusEl.textContent = 'コピーできませんでした。ID「nm79」を選択してコピーしてください。';
+                } finally {
+                    discordCopyEl.disabled = false;
+                    copyFeedbackTimer = window.setTimeout(() => {
+                        discordCopyEl.textContent = 'コピー';
+                    }, 2500);
                 }
             });
         }
 
-        // 背景画像を遅延読み込み（IntersectionObserverでビューポート付近になったときに反映）
-        const lazyLoadBackground = (el) => {
-            if (!el || !el.dataset.bg) return;
-            const src = el.dataset.bg;
-            const applyBg = () => {
-                el.style.backgroundImage = `url("${src}")`;
-                el.removeAttribute('data-bg');
-            };
-            const img = new Image();
-            img.onload = applyBg;
-            img.onerror = applyBg;
-            img.src = src;
-        };
-
-        const lazyBgTargets = document.querySelectorAll('.lazy-bg[data-bg]');
-        if ('IntersectionObserver' in window) {
-            const observer = new IntersectionObserver((entries, obs) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        lazyLoadBackground(entry.target);
-                        obs.unobserve(entry.target);
-                    }
-                });
-            }, { rootMargin: '200px 0px' });
-            lazyBgTargets.forEach(el => observer.observe(el));
-        } else {
-            lazyBgTargets.forEach(el => setTimeout(() => lazyLoadBackground(el), 300));
-        }
-
-        // グローバル背景は初回ホバー時のみ読み込み
-        let globalBgLoaded = false;
-        const ensureGlobalBg = () => {
-            if (globalBgLoaded || !globalBgEl || !globalBgEl.dataset.bg) return;
-            lazyLoadBackground(globalBgEl);
-            globalBgLoaded = true;
-        };
-        profileIcon.addEventListener('mouseenter', ensureGlobalBg);
-        profileIcon.addEventListener('focus', ensureGlobalBg);
-        profileArea.addEventListener('mouseenter', ensureGlobalBg);
+        // Prewarm on approach or focus, without activating the summer scene.
+        profileIcon?.addEventListener('mouseenter', ensureGlobalBg);
+        profileIcon?.addEventListener('focus', ensureGlobalBg);
+        profileArea?.addEventListener('mouseenter', ensureGlobalBg);
 
         // 標準のアンカー移動・URLハッシュ・履歴を保ち、メニューだけ閉じる
         document.querySelectorAll('nav a[href^="#"]').forEach(link => {
-            link.addEventListener('click', () => setMenuOpen(false));
+            link.addEventListener('click', () => {
+                setMenuOpen(false);
+                document.querySelector(link.getAttribute('href'))?.focus({ preventScroll: true });
+            });
         });
+        const navLinks = [...document.querySelectorAll('nav a[href^="#"]')];
+        const navSections = navLinks.map(link => document.querySelector(link.getAttribute('href')));
+        let navigationFrame = 0;
+        const updateCurrentSection = () => {
+            navigationFrame = 0;
+            bodyEl.classList.toggle('has-scrolled', window.scrollY > 24);
+            let current = 0;
+            const threshold = (document.querySelector('header')?.getBoundingClientRect().height || 72) + 48;
+            navSections.forEach((section, index) => {
+                if (section && section.getBoundingClientRect().top <= threshold) current = index;
+            });
+            if (window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 2) current = navLinks.length - 1;
+            navLinks.forEach((link, index) => {
+                if (index === current) link.setAttribute('aria-current', 'location');
+                else link.removeAttribute('aria-current');
+            });
+        };
+        window.addEventListener('scroll', () => {
+            if (!navigationFrame) navigationFrame = requestAnimationFrame(updateCurrentSection);
+        }, { passive: true });
+        window.addEventListener('resize', updateCurrentSection);
+        document.documentElement.classList.add('js-enabled');
+        updateCurrentSection();
     </script>
 </body>
 </html>
