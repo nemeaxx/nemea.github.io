@@ -536,12 +536,6 @@
         .contact-info-text { margin: 4px 0 26px; color: var(--muted-color); font-size: 0.8rem; line-height: 2.1; max-width: 440px; }
         .contact-btn { display: inline-block; max-width: 100%; padding: 4px 0 10px; border-bottom: 1px solid #7f9cb8; font-size: clamp(1rem, 1.6vw, 1.25rem); font-weight: 400; letter-spacing: -0.03em; overflow-wrap: anywhere; }
         .contact-btn:hover { color: #fff; border-color: #fff; }
-        .discord-contact { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin: 20px 0 0; font-size: 0.76rem; color: var(--muted-color); }
-        .discord-contact > i { color: #a9b9ff; }
-        .discord-id { color: var(--text-color); user-select: text; }
-        .copyable { min-height: 44px; padding: 8px 10px; border: 0; background: none; color: #c4d5e8; font: inherit; font-size: 0.7rem; text-decoration: underline; text-underline-offset: 5px; cursor: pointer; }
-        .copyable:hover { color: #fff; }
-        .copy-status { min-height: 1.8em; margin: 4px 0 0; color: var(--accent-color); font-size: 0.72rem; }
         .contact-note { margin: 16px 0 0; max-width: 440px; font-size: 0.7rem; line-height: 2; color: var(--muted-color); }
         .site-footer { max-width: 1280px; margin: 0 auto; padding: 24px 56px 32px; color: var(--muted-color); font-size: 0.65rem; }
         .footer-inner { display: flex; justify-content: space-between; align-items: center; gap: 20px; padding-top: 20px; border-top: 1px solid var(--line-color); }
@@ -612,8 +606,7 @@
         .page-hidden .ambient-sparkles span { animation-play-state: paused !important; }
 
         /* Progressive enhancement: useful navigation even if scripting fails. */
-        html:not(.js-enabled) .menu-toggle,
-        html:not(.js-enabled) .copyable { display: none; }
+        html:not(.js-enabled) .menu-toggle { display: none; }
         html:not(.js-enabled) .ambient-light::before,
         html:not(.js-enabled) .ambient-light::after,
         html:not(.js-enabled) .ambient-sparkles span { animation: none; }
@@ -824,18 +817,12 @@
                 </div>
                 <div class="contact-area">
                     <p class="contact-info-text">
-                        楽曲制作のご依頼等は、メールまたはSNSのDM、Discordでお気軽にご連絡ください。
+                        楽曲制作のご依頼等は、メールまたはXのDMでお気軽にご連絡ください。<br>
+                        ご連絡後のやり取りはDiscordでも可能です。
                     </p>
                     
                     <div class="contact-actions">
                         <a href="mailto:nemea79@gmail.com" class="contact-btn">nemea79@gmail.com</a>
-                        <div class="discord-contact">
-                            <i class="fa-brands fa-discord" aria-hidden="true"></i>
-                            <span>Discord</span>
-                            <span class="discord-id">[removed]</span>
-                            <button type="button" id="discordCopy" class="copyable" aria-label="Discord ID [removed]をコピー">コピー</button>
-                        </div>
-                        <p id="copyStatus" class="copy-status" role="status" aria-live="polite" aria-atomic="true"></p>
                     </div>
                     
                     <p class="contact-note">
@@ -859,8 +846,6 @@
         const profileIcon = document.getElementById('profileIcon');
         const profileArea = document.getElementById('profileArea');
         const bodyEl = document.body;
-        const discordCopyEl = document.getElementById('discordCopy');
-        const copyStatusEl = document.getElementById('copyStatus');
         const globalBgEl = document.getElementById('globalBg');
         const menuToggleEl = document.getElementById('menuToggle');
         const menuToggleLabelEl = document.getElementById('menuToggleLabel');
@@ -1854,29 +1839,6 @@
             resizeMemoryTraceCanvas();
             scheduleMemoryEcho();
         });
-
-        // Show copy feedback to everyone; keep the ID readable if copying is denied.
-        let copyFeedbackTimer = 0;
-        if (discordCopyEl) {
-            discordCopyEl.addEventListener('click', async () => {
-                window.clearTimeout(copyFeedbackTimer);
-                discordCopyEl.disabled = true;
-                if (copyStatusEl) copyStatusEl.textContent = '';
-                try {
-                    await navigator.clipboard.writeText('[removed]');
-                    discordCopyEl.textContent = 'コピー済み';
-                    if (copyStatusEl) copyStatusEl.textContent = 'Discord IDをコピーしました。';
-                } catch {
-                    discordCopyEl.textContent = 'コピー';
-                    if (copyStatusEl) copyStatusEl.textContent = 'コピーできませんでした。ID「[removed]」を選択してコピーしてください。';
-                } finally {
-                    discordCopyEl.disabled = false;
-                    copyFeedbackTimer = window.setTimeout(() => {
-                        discordCopyEl.textContent = 'コピー';
-                    }, 2500);
-                }
-            });
-        }
 
         // Prewarm on approach or focus, without activating the summer scene.
         profileIcon?.addEventListener('mouseenter', ensureGlobalBg);
